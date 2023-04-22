@@ -1,4 +1,5 @@
 import 'package:etaxi_mobile/providers/auth_provider.dart';
+import 'package:etaxi_mobile/screens/forgot_password.dart';
 import 'package:etaxi_mobile/screens/register.dart';
 import 'package:etaxi_mobile/services/auth_services.dart';
 import 'package:etaxi_mobile/utils/colors.dart';
@@ -137,6 +138,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   sh(20),
                   InkWell(
+                      onTap: () => {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (_) => const ForgotPasswordScreen()))
+                          },
                       child: Text('Zaboravljena sifra?',
                           style: TextStyle(
                               fontWeight: FontWeight.w700,

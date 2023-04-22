@@ -41,4 +41,11 @@ class AuthServices {
 
     return res;
   }
+
+  static Future forgotPassword(data) async {
+    Response res = await ApiModels()
+        .postRequest(url: 'api/Auth/forgotpassword', data: data);
+    inspect(res);
+    if (res.statusCode == 200) {}
+  }
 }
