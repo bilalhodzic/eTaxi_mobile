@@ -1,7 +1,9 @@
 import 'package:etaxi_mobile/providers/auth_provider.dart';
 import 'package:etaxi_mobile/screens/forgot_password.dart';
+import 'package:etaxi_mobile/screens/mode_selector.dart';
 import 'package:etaxi_mobile/screens/register.dart';
 import 'package:etaxi_mobile/services/auth_services.dart';
+import 'package:etaxi_mobile/services/home_service.dart';
 import 'package:etaxi_mobile/utils/colors.dart';
 import 'package:etaxi_mobile/utils/sizeConfig.dart';
 import 'package:etaxi_mobile/widgets/custom_button.dart';
@@ -39,19 +41,18 @@ class _LoginScreenState extends State<LoginScreen> {
       'password': pwdController.text
     };
     try {
-      await AuthServices.loginService(dataToSend);
+      // await AuthServices.loginService(dataToSend);
 
       var userProvider =
           null; //Provider.of<UserProvider>(context, listen: false);
       // print(userProvider);
-      if (userProvider.user != null) {
-        // HomeService.getHubs();
-        // Navigator.of(context).pushReplacement(
-        //   MaterialPageRoute(
-        //     builder: (_) => ModeSelectorScreen(),
-        //   ),
-        // );
-      }
+      //  if (userProvider.user != null) {
+      HomeService.getHubs();
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => ModeSelectorScreen(),
+        ),
+      );
     } catch (e) {
       print(e);
     } finally {
@@ -63,9 +64,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    SizeConfig().init(context);
-    var h = SizeConfig.screenHeight / 812;
-    var b = SizeConfig.screenWidth / 375;
     AuthProvider authProvider =
         Provider.of<AuthProvider>(context, listen: false);
 
@@ -73,13 +71,13 @@ class _LoginScreenState extends State<LoginScreen> {
       backgroundColor: Colors.white,
       body: SafeArea(
           child: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: b * 30, vertical: h * 16),
+        padding: EdgeInsets.symmetric(horizontal: 30, vertical: 16),
         child: Column(children: [
           sh(30),
           Image.asset(
             'assets/images/login_illus.png',
-            width: b * 178,
-            height: h * 133,
+            width: 178,
+            height: 133,
           ),
           sh(30),
           Form(
@@ -89,7 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   Text('Login',
                       style: TextStyle(
-                          fontSize: b * 24,
+                          fontSize: 24,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 0.65)),
                   sh(30),
@@ -146,7 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           style: TextStyle(
                               fontWeight: FontWeight.w700,
                               color: Colors.black,
-                              fontSize: b * 14))),
+                              fontSize: 14))),
                   sh(20),
                   Center(
                       child: CustomButton(
@@ -165,7 +163,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Text(
                       'Nemate kreiran racun? ',
                       style: TextStyle(
-                        fontSize: b * 14,
+                        fontSize: 14,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -180,7 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Text(
                         'Napravi racun',
                         style: TextStyle(
-                          fontSize: b * 14,
+                          fontSize: 14,
                           fontWeight: FontWeight.w700,
                           color: secondaryColor,
                         ),

@@ -189,7 +189,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               passwordError = 'Polje ne smije biti prazno';
                             });
                             //return 'Polje ne smije biti prazno';
-                          } else if (!regex.hasMatch(pwdController.text!)) {
+                          } else if (!regex.hasMatch(pwdController.text)) {
                             setState(() {
                               passwordError =
                                   'Sifra mora biti imati min 8 karaktera, broj i veliko slovo';
