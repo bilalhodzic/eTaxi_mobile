@@ -43,9 +43,6 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       // await AuthServices.loginService(dataToSend);
 
-      var userProvider =
-          null; //Provider.of<UserProvider>(context, listen: false);
-      // print(userProvider);
       //  if (userProvider.user != null) {
       HomeService.getHubs();
       Navigator.of(context).pushReplacement(

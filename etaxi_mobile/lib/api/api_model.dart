@@ -1,9 +1,11 @@
 import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 
-final realDeviceUri = 'http://192.168.0.15:44310/';
-final localUri = 'http://10.0.2.2:44310/';
-final ngRokUri = 'https://1a5f-93-180-105-223.eu.ngrok.io/';
+const realDeviceUri = 'https://192.168.0.23:49155/';
+const localUri = 'http://10.0.2.2:44310/';
+const ngRokUri = 'https://5dad-178-236-86-58.eu.ngrok.io/';
+const googleApiKey = 'AIzaSyBllt8BR5FXxa6kmBRODoh08Rg__uQ3sCA';
 
 class ApiModels {
   // final apiUrl = 'https://localhost:44310/';

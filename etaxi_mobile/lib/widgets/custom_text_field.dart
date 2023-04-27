@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 
 class CustomTextField extends StatelessWidget {
   CustomTextField({
-    @required this.label,
-    @required this.controller,
-    @required this.suffix,
-    @required this.isVisibilty,
+    required this.label,
+    required this.controller,
+    this.suffix,
+    this.isVisibilty,
     this.inputType,
     this.maxLines,
     this.size,

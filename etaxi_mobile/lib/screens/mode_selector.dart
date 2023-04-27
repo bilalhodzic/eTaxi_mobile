@@ -1,4 +1,6 @@
+import 'package:etaxi_mobile/providers/order_provider.dart';
 import 'package:etaxi_mobile/screens/self%20drive/bottomNavSelfDrive.dart';
+import 'package:etaxi_mobile/screens/taxi/home/pages/homeMainTaxi.dart';
 import 'package:etaxi_mobile/utils/sizeConfig.dart';
 import 'package:flutter/material.dart';
 
@@ -102,6 +104,14 @@ class _ModeSelectorScreenState extends State<ModeSelectorScreen> {
                   setState(() {
                     isSelf = false;
                     isTaxi = true;
+                  });
+                  OrderProvider.instance.resetToInit();
+                  Future.delayed(Duration(milliseconds: 20), () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => HomeMainTaxi(),
+                      ),
+                    );
                   });
                 },
                 child: Container(
