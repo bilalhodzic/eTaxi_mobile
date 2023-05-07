@@ -1,4 +1,6 @@
 import 'package:etaxi_mobile/providers/auth_provider.dart';
+import 'package:etaxi_mobile/screens/login.dart';
+import 'package:etaxi_mobile/screens/mode_selector.dart';
 import 'package:etaxi_mobile/services/auth_services.dart';
 import 'package:etaxi_mobile/utils/colors.dart';
 import 'package:etaxi_mobile/utils/sizeConfig.dart';
@@ -17,7 +19,9 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  TextEditingController nameController = TextEditingController();
+  TextEditingController firstNameController = TextEditingController();
+  TextEditingController lastNameController = TextEditingController();
+
   TextEditingController emailController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
   TextEditingController pwdController = TextEditingController();
@@ -36,26 +40,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   void initState() {
     emailController.text = 'email@email.com';
-    pwdController.text = 'Sifra123';
-    confPwdController.text = 'Sifra123';
+    pwdController.text = 'Sifra123_';
+    confPwdController.text = 'Sifra123_';
     phoneController.text = '603572781';
-    nameController.text = 'Bilal';
+    firstNameController.text = 'Bilal';
+    lastNameController.text = "Hodzic";
     super.initState();
   }
 
   register() async {
     final dataToSend = {
-      'userName': nameController.text,
+      "firstName": firstNameController.text,
+      "lastName": lastNameController.text,
+      'userName': firstNameController.text + lastNameController.text,
       'password': pwdController.text,
       "email": emailController.text,
-      "firstName": 'string',
-      "lastName": "string",
       "confirmPassword": confPwdController.text,
-      "userType": 3,
-      "isWeb": false
+      "phoneNumber": phoneController.text,
     };
     try {
       await AuthServices.registerService(dataToSend);
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => LoginScreen(),
+        ),
+      );
     } catch (e) {
       print(e);
     } finally {
@@ -121,11 +130,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       sh(30),
                       CustomTextField(
                         label: 'Ime',
-                        controller: nameController,
+                        controller: firstNameController,
                         suffix: null,
                         isVisibilty: null,
                         validator: (val) {
-                          if (nameController.text.trim() == "")
+                          if (firstNameController.text.trim() == "")
+                            return 'Polje ne smije biti prazno';
+                          else
+                            return null;
+                        },
+                      ),
+                      sh(20),
+                      CustomTextField(
+                        label: 'Prezime',
+                        controller: lastNameController,
+                        suffix: null,
+                        isVisibilty: null,
+                        validator: (val) {
+                          if (lastNameController.text.trim() == "")
                             return 'Polje ne smije biti prazno';
                           else
                             return null;

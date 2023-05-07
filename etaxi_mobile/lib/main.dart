@@ -1,10 +1,22 @@
+import 'dart:io';
+
 import 'package:etaxi_mobile/providers/auth_provider.dart';
 import 'package:etaxi_mobile/screens/login.dart';
 import 'package:etaxi_mobile/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
+}
+
 void main() {
+  HttpOverrides.global = MyHttpOverrides();
   runApp(const MyApp());
 }
 

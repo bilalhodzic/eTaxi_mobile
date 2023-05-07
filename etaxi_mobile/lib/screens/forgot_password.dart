@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:etaxi_mobile/services/auth_services.dart';
 import 'package:etaxi_mobile/utils/sizeConfig.dart';
 import 'package:etaxi_mobile/widgets/app_snack_bar.dart';
@@ -23,16 +25,28 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       setState(() {
         isPressed = true;
       });
-      final dataToSend = {'email': emailController.text, 'isMobile': true};
+      final dataToSend = {'email': emailController.text};
 
-      await AuthServices.forgotPassword(dataToSend);
+      try {
+        await AuthServices.forgotPassword(dataToSend);
 
-      appSnackBar(
-        context: context,
-        msg: 'Link za ponistavanje sifre je poslan na vas mail',
-        isError: false,
-      );
-      Navigator.of(context).pop();
+        appSnackBar(
+          context: context,
+          msg: 'Link za ponistavanje sifre je poslan na vas mail',
+          isError: false,
+        );
+        Navigator.of(context).pop();
+      } on Exception catch (e) {
+        appSnackBar(
+          context: context,
+          msg: e.toString(),
+          isError: true,
+        );
+      } finally {
+        setState(() {
+          isPressed = false;
+        });
+      }
     }
   }
 

@@ -41,9 +41,8 @@ class _LoginScreenState extends State<LoginScreen> {
       'password': pwdController.text
     };
     try {
-      // await AuthServices.loginService(dataToSend);
+      await AuthServices.loginService(dataToSend);
 
-      //  if (userProvider.user != null) {
       HomeService.getHubs();
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
@@ -76,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
             width: 178,
             height: 133,
           ),
-          sh(30),
+          sh(50),
           Form(
               key: _formKey,
               child: Column(

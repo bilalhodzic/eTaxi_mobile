@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:etaxi_mobile/api/api_model.dart';
+import 'package:etaxi_mobile/models/user_model.dart';
 import 'package:etaxi_mobile/providers/auth_provider.dart';
+import 'package:flutter/animation.dart';
 import 'package:http/http.dart';
 import 'package:jwt_decode/jwt_decode.dart';
 
@@ -15,8 +17,7 @@ class AuthServices {
       var token = decoded['token'];
       AuthProvider.instance.setToken(token);
 
-      //await AuthService.getUser(int.parse(decoded['id']));
-      print('heree');
+      await getUser(int.parse(decoded['id']));
     } else {
       AuthProvider.instance.setError(jsonDecode(res.body)['ERROR'][0], 'login');
     }
@@ -31,9 +32,6 @@ class AuthServices {
     if (res.statusCode == 200) {
       var token = jsonDecode(res.body)['Token'];
       AuthProvider.instance.setToken(token);
-
-      var parsedToken = Jwt.parseJwt(token ?? '');
-      //await UserService.getUser(int.parse(parsedToken['UserId']));
     } else {
       AuthProvider.instance
           .setError(jsonDecode(res.body)['ERROR'][0], 'register');
@@ -44,8 +42,23 @@ class AuthServices {
 
   static Future forgotPassword(data) async {
     Response res = await ApiModels()
-        .postRequest(url: 'api/Auth/forgotpassword', data: data);
+        .postRequest(url: 'api/Auth/forgot-password', data: data);
     inspect(res);
-    if (res.statusCode == 200) {}
+    if (res.statusCode == 200) {
+    } else {
+      throw Exception('Greska prilikom slanja linka za ponistavanje sifre');
+    }
+  }
+
+  static Future getUser(int id) async {
+    Response res = await ApiModels().getRequest(url: 'user/$id');
+    if (res.statusCode == 200) {
+      var decoded = jsonDecode(res.body);
+      inspect(decoded);
+      AuthProvider.instance.setUser(Userinfo.fromJson(decoded));
+      inspect(Userinfo.fromJson(decoded));
+    }
+
+    return res;
   }
 }

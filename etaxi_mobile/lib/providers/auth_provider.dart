@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:etaxi_mobile/models/user_model.dart';
 
 class AuthProvider extends ChangeNotifier {
   //singleton
@@ -17,6 +18,13 @@ class AuthProvider extends ChangeNotifier {
   String? token;
   String? loginError;
   String? registerError;
+  Userinfo? _user;
+  Userinfo? get user => _user;
+
+  void setUser(Userinfo? usr) {
+    _user = usr;
+    // inspect(_user);
+  }
 
   setError(err, String type) {
     if (type == 'login') {
