@@ -44,10 +44,10 @@ class Userinfo {
     id = json['Id'];
     firstName = json['FirstName'];
     lastName = json['LastName'];
-    pin = json['Pin'] ?? 0;
-    userType = json['UserType'];
-    isActive = json['IsActive'];
-    userCreatedTime = DateTime.parse(json['UserCreatedTime']);
-    verifiedAccount = json['VerifiedAccount'] ?? 0;
+    pin = json['pin'] ?? 0;
+    //userType = json['UserType'];
+    //isActive = json['IsActive'];
+    //userCreatedTime = DateTime.parse(json['UserCreatedTime']);
+    // verifiedAccount = json['VerifiedAccount'] ?? 0;
   }
 }

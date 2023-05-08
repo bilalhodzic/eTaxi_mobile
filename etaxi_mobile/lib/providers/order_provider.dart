@@ -53,7 +53,7 @@ class OrderProvider extends ChangeNotifier {
   Future setCurrentLoc(LatLng loc, String add) async {
     currentLocation = loc;
     currentAddress = add;
-    await mapController!.animateCamera(
+    await mapController?.animateCamera(
         CameraUpdate.newCameraPosition(CameraPosition(target: loc, zoom: 15)));
     notifyListeners();
   }
@@ -61,7 +61,7 @@ class OrderProvider extends ChangeNotifier {
   Future setDestinationLoc(LatLng loc, String add) async {
     destinationLocation = loc;
     destinationAddress = add;
-    await mapController!.animateCamera(
+    await mapController?.animateCamera(
         CameraUpdate.newCameraPosition(CameraPosition(target: loc, zoom: 15)));
 
     notifyListeners();
@@ -69,14 +69,14 @@ class OrderProvider extends ChangeNotifier {
 
   Future setDirections(Directions dir) async {
     directions = dir;
-    await mapController!.animateCamera(
+    await mapController?.animateCamera(
       CameraUpdate.newLatLngBounds(directions!.bounds!, 100),
     );
     notifyListeners();
   }
 
   Future animateMapToDirectionBounds() async {
-    await mapController!.animateCamera(
+    await mapController?.animateCamera(
       CameraUpdate.newLatLngBounds(directions!.bounds!, 100),
     );
     notifyListeners();

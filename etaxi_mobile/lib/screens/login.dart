@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:etaxi_mobile/providers/auth_provider.dart';
 import 'package:etaxi_mobile/screens/forgot_password.dart';
 import 'package:etaxi_mobile/screens/mode_selector.dart';
@@ -43,13 +45,17 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       await AuthServices.loginService(dataToSend);
 
-      HomeService.getHubs();
+      // HomeService.getHubs();
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (_) => ModeSelectorScreen(),
         ),
       );
     } catch (e) {
+      inspect(e);
+      print(e);
+      AuthProvider.instance.setError(e, 'login');
+
       print(e);
     } finally {
       setState(() {
