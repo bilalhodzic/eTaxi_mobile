@@ -19,7 +19,7 @@ class AuthServices {
 
       await getUser(int.parse(decoded['id']));
     } else {
-      AuthProvider.instance.setError(jsonDecode(res.body)['ERROR'][0], 'login');
+      AuthProvider.instance.setError(jsonDecode(res.body)["title"], 'login');
     }
 
     return res;
@@ -33,8 +33,7 @@ class AuthServices {
       var token = jsonDecode(res.body)['Token'];
       AuthProvider.instance.setToken(token);
     } else {
-      AuthProvider.instance
-          .setError(jsonDecode(res.body)['ERROR'][0], 'register');
+      AuthProvider.instance.setError(jsonDecode(res.body)["title"], 'register');
     }
 
     return res;
@@ -47,6 +46,16 @@ class AuthServices {
     if (res.statusCode == 200) {
     } else {
       throw Exception('Greska prilikom slanja linka za ponistavanje sifre');
+    }
+  }
+
+  static Future resetPassword(data) async {
+    Response res = await ApiModels()
+        .postRequest(url: 'api/Auth/reset-password', data: data);
+    inspect(res);
+    if (res.statusCode == 200) {
+    } else {
+      throw jsonDecode(res.body)['title'];
     }
   }
 

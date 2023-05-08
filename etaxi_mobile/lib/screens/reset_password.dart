@@ -1,6 +1,3 @@
-import 'dart:developer';
-
-import 'package:etaxi_mobile/screens/reset_password.dart';
 import 'package:etaxi_mobile/services/auth_services.dart';
 import 'package:etaxi_mobile/utils/sizeConfig.dart';
 import 'package:etaxi_mobile/widgets/app_snack_bar.dart';
@@ -8,16 +5,21 @@ import 'package:etaxi_mobile/widgets/custom_button.dart';
 import 'package:etaxi_mobile/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 
-class ForgotPasswordScreen extends StatefulWidget {
-  const ForgotPasswordScreen({Key? key}) : super(key: key);
+class ResetPasswordScreen extends StatefulWidget {
+  const ResetPasswordScreen({Key? key}) : super(key: key);
 
   @override
-  _ForgotPasswordScreenState createState() => _ForgotPasswordScreenState();
+  _ResetPasswordScreenState createState() => _ResetPasswordScreenState();
 }
 
-class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   TextEditingController emailController = TextEditingController();
+  TextEditingController pwdController = TextEditingController();
+  TextEditingController confPwdController = TextEditingController();
+  TextEditingController pinController = TextEditingController();
+
   bool isPressed = false;
+  String? error;
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   resetPass() async {
@@ -25,25 +27,28 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     if (_formKey.currentState!.validate()) {
       setState(() {
         isPressed = true;
+        error = null;
       });
-      final dataToSend = {'email': emailController.text};
+      final dataToSend = {
+        'email': emailController.text,
+        'password': pwdController.text,
+        'confirmPassword': confPwdController.text,
+        'pin': pinController.text
+      };
 
       try {
-        await AuthServices.forgotPassword(dataToSend);
+        await AuthServices.resetPassword(dataToSend);
 
         appSnackBar(
           context: context,
-          msg: 'Link za ponistavanje sifre je poslan na vas mail',
+          msg: 'Uspjesno resetovana sifra',
           isError: false,
         );
-        Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => ResetPasswordScreen()));
-      } on Exception catch (e) {
-        appSnackBar(
-          context: context,
-          msg: e.toString(),
-          isError: true,
-        );
+        Navigator.of(context).pop();
+      } catch (e) {
+        setState(() {
+          error = e.toString();
+        });
       } finally {
         setState(() {
           isPressed = false;
@@ -91,7 +96,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 sh(15),
                 sh(50),
                 Text(
-                  'Zaboravljena sifra?',
+                  'Resetuj sifru',
                   style: TextStyle(
                     fontSize: b * 24,
                     fontWeight: FontWeight.w900,
@@ -100,7 +105,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ),
                 sh(30),
                 CustomTextField(
-                  label: 'Upisite vas email sa kojim ste se registrovali',
+                  label: 'Unesite pin iz vaseg email',
+                  controller: pinController,
+                  suffix: null,
+                  isVisibilty: null,
+                  inputType: TextInputType.number,
+                ),
+                sh(20),
+                CustomTextField(
+                  label: 'Upisite vas email',
                   controller: emailController,
                   suffix: null,
                   isVisibilty: null,
@@ -117,14 +130,35 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   },
                 ),
                 sh(20),
+                CustomTextFieldPassword(
+                  label: 'Sifra',
+                  controller: pwdController,
+                ),
+                sh(20),
+                CustomTextFieldPassword(
+                  label: 'Ponovi sifru',
+                  controller: confPwdController,
+                ),
+                sh(20),
                 Center(
                   child: isPressed
                       ? LoadingButton()
                       : CustomButton(
-                          label: 'Posalji',
+                          label: 'Resetuj',
                           onPressed: resetPass,
                         ),
                 ),
+                if (error != null)
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      error!,
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: b * 14,
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),
