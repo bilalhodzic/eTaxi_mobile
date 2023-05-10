@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:etaxi_mobile/api/api_model.dart';
 import 'package:etaxi_mobile/models/directions_model.dart';
+import 'package:etaxi_mobile/models/location_model.dart';
 import 'package:etaxi_mobile/providers/order_provider.dart';
 import 'package:etaxi_mobile/screens/taxi/home/pages/bookingPage.dart';
 import 'package:etaxi_mobile/screens/taxi/home/pages/destinationPage.dart';
@@ -39,9 +42,10 @@ class _HomeTaxiState extends State<HomeTaxi> {
 
     final loc = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.bestForNavigation);
-
-    OrderProvider.instance.setCurrentLoc(
-        LatLng(loc.latitude, loc.longitude), 'Trenutna lokacija');
+    OrderProvider.instance.setCurrentLoc(Location(
+        latitude: loc.latitude,
+        longitude: loc.longitude,
+        address: "Trenutna lokacija"));
     _cameraPosition =
         CameraPosition(target: LatLng(loc.latitude, loc.longitude));
   }
@@ -97,8 +101,8 @@ class _HomeTaxiState extends State<HomeTaxi> {
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: SearchBar(
-                            hintText: value.currentAddress != null
-                                ? value.currentAddress!
+                            hintText: value.currentLocationData != null
+                                ? value.currentLocationData!.address!
                                 : "Izaberite pocetnu lokaciju",
                             onTap: () async {
                               FocusScope.of(context).unfocus();
@@ -108,22 +112,37 @@ class _HomeTaxiState extends State<HomeTaxi> {
                                   builder: (context) => PlacePicker(
                                     googleApiKey,
                                     defaultLocation: LatLng(
-                                        OrderProvider
-                                            .instance.currentLocation!.latitude,
-                                        OrderProvider.instance.currentLocation!
-                                            .longitude),
+                                        OrderProvider.instance
+                                            .currentLocationData!.latitude!,
+                                        OrderProvider.instance
+                                            .currentLocationData!.longitude!),
                                   ),
                                 ),
                               );
                               if (result.latLng != null) {
                                 await OrderProvider.instance.setCurrentLoc(
-                                    result.latLng!, result.formattedAddress!);
+                                  Location(
+                                    latitude: result.latLng!.latitude,
+                                    longitude: result.latLng!.longitude,
+                                    address: result.formattedAddress,
+                                    city: result.city?.name,
+                                    country: result.country?.name,
+                                    postalCode: result.postalCode,
+                                  ),
+                                );
                               }
                               Directions? dir = await DirectionServices()
                                   .getDirections(
                                       origin: result.latLng!,
-                                      dest: OrderProvider
-                                          .instance.destinationLocation!);
+                                      dest: LatLng(
+                                          OrderProvider
+                                              .instance
+                                              .destinationLocationData!
+                                              .latitude!,
+                                          OrderProvider
+                                              .instance
+                                              .destinationLocationData!
+                                              .longitude!));
 
                               if (dir != null)
                                 await OrderProvider.instance.setDirections(dir);

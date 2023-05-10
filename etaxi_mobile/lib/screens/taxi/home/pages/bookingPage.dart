@@ -1,7 +1,16 @@
+import 'dart:developer';
+
+import 'package:etaxi_mobile/providers/auth_provider.dart';
 import 'package:etaxi_mobile/providers/order_provider.dart';
+import 'package:etaxi_mobile/screens/taxi/home/pages/taxiRideBookedPage.dart';
 import 'package:etaxi_mobile/screens/taxi/widgets/taxiInfoListTile.dart';
+import 'package:etaxi_mobile/services/order_services.dart';
 import 'package:etaxi_mobile/utils/colors.dart';
 import 'package:etaxi_mobile/utils/sizeConfig.dart';
+import 'package:etaxi_mobile/widgets/app_snack_bar.dart';
+import 'package:etaxi_mobile/widgets/custom_button.dart';
+import 'package:etaxi_mobile/widgets/custom_text_field.dart';
+import 'package:etaxi_mobile/widgets/line.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
@@ -85,7 +94,8 @@ class BookingPage extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      OrderProvider.instance.currentAddress ??
+                                      OrderProvider.instance.currentLocationData
+                                              ?.address ??
                                           "Trenutna lokacija",
                                       style: TextStyle(
                                         fontSize: 12,
@@ -118,7 +128,9 @@ class BookingPage extends StatelessWidget {
                                   children: [
                                     Text(
                                       OrderProvider
-                                              .instance.destinationAddress ??
+                                              .instance
+                                              .destinationLocationData
+                                              ?.address ??
                                           "",
                                       style: TextStyle(
                                         fontSize: 12,
@@ -142,18 +154,60 @@ class BookingPage extends StatelessWidget {
                     ),
                     TaxiInfoListTile(),
                     Padding(
-                      padding: const EdgeInsets.only(left: 16, top: 12),
-                      child: Text(
-                        "Promo kod",
-                        style: TextStyle(fontWeight: FontWeight.w400),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 5),
+                      child: CustomTextField(
+                        label: 'Promo kod',
+                        controller: _promoCodeController,
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: TextField(
-                        controller: _promoCodeController,
-                      ),
+                      child: CustomButton(
+                          label: 'Primijeni promo kod', onPressed: () {}),
                     ),
+                    if (OrderProvider.instance.selectedVehicle != null)
+                      Container(
+                        margin: EdgeInsets.symmetric(
+                          horizontal: 15,
+                          vertical: 15,
+                        ),
+                        padding: EdgeInsets.fromLTRB(17, 20, 17, 20),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Color(0xff0000000).withOpacity(0.1),
+                              spreadRadius: 0,
+                              blurRadius: 4,
+                              offset: Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            bookingDetailsListTab(
+                                'Naziv vozila',
+                                OrderProvider
+                                    .instance.selectedVehicle!.vehicleName!),
+                            bookingDetailsListTab(
+                                'Cijena po km',
+                                OrderProvider.instance.selectedVehicle!.price
+                                        .toString() +
+                                    " BAM"),
+                            bookingDetailsListTab(
+                                'Udaljenost',
+                                OrderProvider
+                                    .instance.directions!.totalDistance!),
+                            sh(8),
+                            line(),
+                            sh(8),
+                            bookingDetailsListTab('Ukupno',
+                                OrderProvider.instance.calculateTotalPrice())
+                          ],
+                        ),
+                      ),
                     Padding(
                       padding: const EdgeInsets.only(left: 16, top: 12),
                       child: Text(
@@ -166,11 +220,11 @@ class BookingPage extends StatelessWidget {
                       child: Consumer<OrderProvider>(
                         builder: (context, notifier, child) => Row(
                           children: [
-                            paymentMethodWidget(
-                                'Online', notifier.paymentMethod == 'Online'),
+                            paymentMethodWidget(PaymentMethod.CASH,
+                                notifier.paymentMethod == PaymentMethod.CASH),
                             sb(8),
-                            paymentMethodWidget(
-                                'Cash', notifier.paymentMethod == 'Cash')
+                            paymentMethodWidget(PaymentMethod.ONLINE,
+                                notifier.paymentMethod == PaymentMethod.ONLINE),
                           ],
                         ),
                       ),
@@ -183,8 +237,30 @@ class BookingPage extends StatelessWidget {
                         minWidth: double.infinity,
                         color: Colors.black,
                         onPressed: () {
-                          OrderProvider.instance
-                              .setBookingStage(BookingStage.RIDE_BOOKED);
+                          if (OrderProvider.instance.selectedVehicle == null) {
+                            return appSnackBar(
+                                context: context,
+                                msg: "Molimo izaberite svoj taxi",
+                                isError: true);
+                          }
+                          if (AuthProvider.instance.user?.id ==
+                              OrderProvider
+                                  .instance.selectedVehicle!.driverId) {
+                            return appSnackBar(
+                                context: context,
+                                msg: "Ne mozete naruciti svoj taxi",
+                                isError: true);
+                          }
+
+                          try {
+                            OrderServices.createOrder();
+                          } catch (e) {
+                            appSnackBar(
+                                context: context,
+                                msg:
+                                    "Doslo je do greske prilikom kreiranja narduzbe",
+                                isError: true);
+                          }
                         },
                         child: Text(
                           'Naruci voznju'.toUpperCase(),
@@ -201,19 +277,18 @@ class BookingPage extends StatelessWidget {
     );
   }
 
-  Widget paymentMethodWidget(String text, bool isSelected) {
+  Widget paymentMethodWidget(PaymentMethod method, bool isSelected) {
     return GestureDetector(
       onTap: () {
-        OrderProvider.instance.setPaymentMethod(text);
+        OrderProvider.instance.setPaymentMethod(method);
       },
       child: Container(
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
             color: isSelected ? primaryColor : Colors.white),
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(text),
-        ),
+            padding: const EdgeInsets.all(8.0),
+            child: Text(PaymentMethod.CASH == method ? "Gotovina" : "Kartica")),
       ),
     );
   }

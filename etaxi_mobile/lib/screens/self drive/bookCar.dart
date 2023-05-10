@@ -199,7 +199,8 @@ class _BookCarState extends State<BookCar> {
                                           runSpacing: h * 5,
                                           children: [
                                             VehicleTags(
-                                              txt: widget.vehicle!.seater,
+                                              txt: widget.vehicle!.seater
+                                                  .toString(),
                                               size: b * 12,
                                             ),
                                             sb(6),

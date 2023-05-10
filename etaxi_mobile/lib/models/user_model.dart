@@ -7,13 +7,9 @@ class Userinfo {
   String? firstName;
   @required
   String? lastName;
-  @required
   String? userType;
-  @required
   DateTime? userCreatedTime;
-  @required
   bool? isActive;
-  @required
   bool? verifiedAccount;
   int? locationId;
   String? userName;
@@ -40,11 +36,12 @@ class Userinfo {
     this.verifiedAccount,
   });
 
-  Userinfo.fromJson(json) {
-    id = json['Id'];
-    firstName = json['FirstName'];
-    lastName = json['LastName'];
+  Userinfo.fromJson(Map<String, dynamic> json) {
+    id = json['id'] ?? 0;
+    firstName = json['firstName'] ?? '';
+    lastName = json['lastName'] ?? '';
     pin = json['pin'] ?? 0;
+    email = json['email'] ?? '';
     //userType = json['UserType'];
     //isActive = json['IsActive'];
     //userCreatedTime = DateTime.parse(json['UserCreatedTime']);

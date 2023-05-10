@@ -16,7 +16,8 @@ class AuthServices {
       var decoded = jsonDecode(res.body);
       var token = decoded['token'];
       AuthProvider.instance.setToken(token);
-      await getUser(decoded['id']);
+      var userDecoded = await getUser(decoded['id']);
+      AuthProvider.instance.setUser(Userinfo.fromJson(userDecoded));
     } else {
       throw jsonDecode(res.body)["title"];
     }
@@ -27,7 +28,6 @@ class AuthServices {
   static Future registerService(data) async {
     Response res =
         await ApiModels().postRequest(url: 'api/Auth/register', data: data);
-    inspect(res);
     if (res.statusCode == 200) {
       var token = jsonDecode(res.body)['Token'];
       AuthProvider.instance.setToken(token);
@@ -41,7 +41,6 @@ class AuthServices {
   static Future forgotPassword(data) async {
     Response res = await ApiModels()
         .postRequest(url: 'api/Auth/forgot-password', data: data);
-    inspect(res);
     if (res.statusCode == 200) {
     } else {
       throw Exception('Greska prilikom slanja linka za ponistavanje sifre');
@@ -51,7 +50,6 @@ class AuthServices {
   static Future resetPassword(data) async {
     Response res = await ApiModels()
         .postRequest(url: 'api/Auth/reset-password', data: data);
-    inspect(res);
     if (res.statusCode == 200) {
     } else {
       throw jsonDecode(res.body)['title'];
@@ -59,12 +57,12 @@ class AuthServices {
   }
 
   static Future getUser(int id) async {
-    Response res = await ApiModels().getRequest(url: 'api/User/$id');
-    if (res.statusCode == 200) {
-      var decoded = jsonDecode(res.body);
-      AuthProvider.instance.setUser(Userinfo.fromJson(decoded));
-    }
+    try {
+      Response res = await ApiModels().getRequest(url: 'api/User/$id');
 
-    return res;
+      return jsonDecode(res.body);
+    } catch (e) {
+      throw e;
+    }
   }
 }

@@ -278,7 +278,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                           sh(5),
                           FutureBuilder(
-                            future: HomeService.getSelfDrivingVehicles(),
+                            future: HomeService.getVehicles(),
                             builder: (context, snap) {
                               if (!(snap.connectionState ==
                                   ConnectionState.waiting)) {

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:etaxi_mobile/models/user_model.dart';
 
@@ -23,7 +25,7 @@ class AuthProvider extends ChangeNotifier {
 
   void setUser(Userinfo? usr) {
     _user = usr;
-    // inspect(_user);
+    notifyListeners();
   }
 
   setError(err, String type) {

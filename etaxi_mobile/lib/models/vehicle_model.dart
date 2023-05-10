@@ -5,13 +5,17 @@ class VehicleModel {
   String? photo;
   String? vehicleName;
   int? price;
-  String? seater;
+  int? seater;
   String? fuelType;
   String? transmission;
   int? year;
   bool? airBags;
-  String? isLimited;
-  String? isUnlimited;
+  String? brand;
+  int? kmTraveled;
+  String? licenceNumber;
+  bool? airCondition;
+  String? color;
+  int? driverId;
 
   VehicleModel(
       {this.vehicleId,
@@ -25,22 +29,29 @@ class VehicleModel {
       this.transmission,
       this.year,
       this.airBags,
-      this.isLimited,
-      this.isUnlimited});
+      this.brand,
+      this.kmTraveled,
+      this.licenceNumber,
+      this.airCondition,
+      this.color,
+      this.driverId});
 
   VehicleModel.fromJson(Map<String, dynamic> json) {
-    vehicleId = json['VehicleId'] ?? 0;
-    modelId = json['model_id'] ?? -1;
-    typeId = json['TypeId'] ?? 0;
-    photo = json['File'] ?? '';
-    vehicleName = json['Name'] ?? 'Bob the builder';
-    price = json['PricePerKm'] ?? '100';
-    seater = json['seater'] ?? '5';
-    fuelType = json['FuelType'] ?? 'Benzinjara';
-    transmission = json['Transmission'] ?? 'Manuelac';
-    year = json['Year'] ?? 1998;
-    airBags = json['AirBag'] ?? false;
-    isLimited = json['is_limited'] ?? '';
-    isUnlimited = json['is_unlimited'] ?? '';
+    vehicleId = json['id'] ?? 0;
+    typeId = json['type']["typeId"] ?? 0;
+    photo = json['imageUrl'] ?? '';
+    vehicleName = json['name'] ?? 'Vozilo';
+    price = json['pricePerKm'] ?? 100;
+    seater = json['type']["numberOfSeats"] ?? 5;
+    fuelType = json['fuelType'] ?? 'Dizel';
+    transmission = json['transmission'] ?? 'Manual';
+    year = json['year'] ?? 0;
+    airBags = json['airBag'] ?? false;
+    brand = json['brand'] ?? '';
+    kmTraveled = json['kmTraveled'] ?? 0;
+    licenceNumber = json['licenceNumber'] ?? '';
+    airCondition = json['airCondition'] ?? false;
+    color = json['color'] ?? '';
+    driverId = json['userDriverId'] ?? 0;
   }
 }

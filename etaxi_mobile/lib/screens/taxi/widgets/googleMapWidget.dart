@@ -23,7 +23,7 @@ class GoogleMapWidget extends StatelessWidget {
         myLocationEnabled: false,
         buildingsEnabled: false,
         markers: {
-          if (value.currentLocation != null)
+          if (value.currentLocationData != null)
             Marker(
               markerId: MarkerId("pickup"),
               icon: BitmapDescriptor.defaultMarkerWithHue(
@@ -31,20 +31,20 @@ class GoogleMapWidget extends StatelessWidget {
               ),
               infoWindow: InfoWindow(title: "Preuzimanje"),
               position: LatLng(
-                value.currentLocation!.latitude,
-                value.currentLocation!.longitude,
+                value.currentLocationData!.latitude!,
+                value.currentLocationData!.longitude!,
               ),
             ),
-          if (value.destinationLocation != null)
+          if (value.destinationLocationData != null)
             Marker(
               markerId: MarkerId('destination'),
               icon: BitmapDescriptor.defaultMarkerWithHue(
                 BitmapDescriptor.hueBlue,
               ),
-              infoWindow: InfoWindow(title: "Istovar"),
+              infoWindow: InfoWindow(title: "Krajnja destinacija"),
               position: LatLng(
-                value.destinationLocation!.latitude,
-                value.destinationLocation!.longitude,
+                value.destinationLocationData!.latitude!,
+                value.destinationLocationData!.longitude!,
               ),
             )
         },

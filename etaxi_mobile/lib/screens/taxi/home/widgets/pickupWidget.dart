@@ -1,10 +1,12 @@
 import 'package:etaxi_mobile/models/directions_model.dart';
+import 'package:etaxi_mobile/models/location_model.dart';
 import 'package:etaxi_mobile/providers/order_provider.dart';
 import 'package:etaxi_mobile/services/directions_services.dart';
 import 'package:etaxi_mobile/utils/sizeConfig.dart';
 import 'package:etaxi_mobile/widgets/searchBar.dart';
 import 'package:flutter/material.dart';
 import 'package:place_picker/entities/location_result.dart';
+import 'package:place_picker/place_picker.dart';
 import 'package:place_picker/widgets/place_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -27,8 +29,8 @@ class PickupWidget extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Consumer<OrderProvider>(
                 builder: (context, value, child) => SearchBar(
-                  hintText: value.destinationAddress != null
-                      ? value.destinationAddress!
+                  hintText: value.destinationLocationData?.address != null
+                      ? value.destinationLocationData!.address!
                       : "Izaberite krajnju lokaciju",
                   onTap: () async {
                     FocusScope.of(context).unfocus();
@@ -39,11 +41,21 @@ class PickupWidget extends StatelessWidget {
                         ));
 
                     if (result.latLng != null) {
-                      await OrderProvider.instance.setDestinationLoc(
-                          result.latLng!, result.formattedAddress!);
+                      await OrderProvider.instance.setDestinationLoc(Location(
+                        latitude: result.latLng!.latitude,
+                        longitude: result.latLng!.longitude,
+                        address: result.formattedAddress,
+                        city: result.city?.name,
+                        country: result.country?.name,
+                        postalCode: result.postalCode,
+                      ));
                     }
                     Directions? dir = await DirectionServices().getDirections(
-                        origin: OrderProvider.instance.currentLocation!,
+                        origin: LatLng(
+                            OrderProvider
+                                .instance.currentLocationData!.latitude!,
+                            OrderProvider
+                                .instance.currentLocationData!.longitude!),
                         dest: result.latLng!);
 
                     if (dir != null)
@@ -60,7 +72,7 @@ class PickupWidget extends StatelessWidget {
                 minWidth: double.infinity,
                 color: Colors.black,
                 onPressed: () {
-                  if (OrderProvider.instance.destinationLocation == null) {
+                  if (OrderProvider.instance.destinationLocationData == null) {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                         duration: Duration(seconds: 1),
                         content: Text('Unesite odredisnu lokaciju')));

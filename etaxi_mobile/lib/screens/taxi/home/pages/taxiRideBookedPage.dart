@@ -1,4 +1,8 @@
+import 'dart:developer';
+
+import 'package:etaxi_mobile/models/user_model.dart';
 import 'package:etaxi_mobile/providers/order_provider.dart';
+import 'package:etaxi_mobile/services/auth_services.dart';
 import 'package:etaxi_mobile/utils/colors.dart';
 import 'package:etaxi_mobile/utils/sizeConfig.dart';
 import 'package:etaxi_mobile/widgets/line.dart';
@@ -40,78 +44,99 @@ class TaxiRideBooked extends StatelessWidget {
                           ),
                         ],
                       ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  height: 60,
-                                  width: 60,
-                                  color: Colors.red,
-                                ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8),
-                                    child: Column(
+                      child: FutureBuilder(
+                          future: AuthServices.getUser(OrderProvider
+                              .instance.selectedVehicle!.driverId!),
+                          builder: (context, snapshot) {
+                            Userinfo driver = Userinfo.fromJson(snapshot.data);
+                            if (snapshot.connectionState ==
+                                ConnectionState.done)
+                              return Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Row(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.end,
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text('Ime vozaca'),
-                                            Text('Status')
-                                          ],
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text('Imae auta koje vozi'),
-                                            Text('Statust text ...')
-                                          ],
-                                        ),
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            color: primaryColor,
-                                          ),
+                                        // Container(
+                                        //   height: 60,
+                                        //   width: 60,
+                                        //   color: Colors.red,
+                                        // ),
+                                        Expanded(
                                           child: Padding(
                                             padding: const EdgeInsets.symmetric(
-                                                horizontal: 8, vertical: 3),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
+                                                horizontal: 8),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.end,
                                               children: [
-                                                Text(
-                                                  '4.8 ★',
-                                                )
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                        '${driver.firstName} ${driver.lastName}'),
+                                                    Text('Status')
+                                                  ],
+                                                ),
+                                                // Row(
+                                                //   mainAxisAlignment:
+                                                //       MainAxisAlignment
+                                                //           .spaceBetween,
+                                                //   children: [
+                                                //     Text('Imae auta koje vozi'),
+                                                //     Text('Statust text ...')
+                                                //   ],
+                                                // ),
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20),
+                                                    color: primaryColor,
+                                                  ),
+                                                  child: Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 8,
+                                                        vertical: 3),
+                                                    child: Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        Text(
+                                                          '4.8 ★',
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
                                               ],
                                             ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                )
-                              ]),
-                          sh(8),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Prekini voznju",
-                                style: TextStyle(color: Colors.red),
-                              ),
-                              Text('Nazovi vozaca')
-                            ],
-                          )
-                        ],
-                      ),
+                                        )
+                                      ]),
+                                  sh(8),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "Prekini voznju",
+                                        style: TextStyle(
+                                            color: Colors.red, fontSize: 16),
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              );
+                            else
+                              return Center(
+                                child: CircularProgressIndicator(),
+                              );
+                          }),
                     ),
                     Container(
                       margin: EdgeInsets.symmetric(
@@ -146,7 +171,8 @@ class TaxiRideBooked extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      OrderProvider.instance.currentAddress ??
+                                      OrderProvider.instance.currentLocationData
+                                              ?.address ??
                                           "Trenutna lokacija",
                                       style: TextStyle(
                                         fontSize: 12,
@@ -179,7 +205,9 @@ class TaxiRideBooked extends StatelessWidget {
                                   children: [
                                     Text(
                                       OrderProvider
-                                              .instance.destinationAddress ??
+                                              .instance
+                                              .destinationLocationData
+                                              ?.address ??
                                           "",
                                       style: TextStyle(
                                         fontSize: 12,
@@ -188,7 +216,7 @@ class TaxiRideBooked extends StatelessWidget {
                                   ],
                                 ),
                               ),
-                              // ),
+                              // )
                             ],
                           ),
                         ],
@@ -214,16 +242,32 @@ class TaxiRideBooked extends StatelessWidget {
                       ),
                       child: Column(
                         children: [
-                          bookingDetailsListTab('bookind id', 'ASLNJDKJASND'),
-                          bookingDetailsListTab('bookind id', 'ASLNJDKJASND'),
-                          bookingDetailsListTab('bookind id', 'ASLNJDKJASND'),
-                          bookingDetailsListTab('bookind id', 'ASLNJDKJASND'),
-                          bookingDetailsListTab('bookind id', 'ASLNJDKJASND'),
-                          bookingDetailsListTab('bookind id', 'ASLNJDKJASND'),
-                          sh(8),
+                          bookingDetailsListTab('Pregled narudzbe', ''),
                           line(),
                           sh(8),
-                          bookingDetailsListTab('TOTAL', '401')
+                          bookingDetailsListTab(
+                              'Naziv vozila',
+                              OrderProvider
+                                  .instance.selectedVehicle!.vehicleName!),
+                          bookingDetailsListTab(
+                              'Udaljenost',
+                              OrderProvider
+                                  .instance.directions!.totalDistance!),
+                          bookingDetailsListTab(
+                              'Vrijeme trajanja',
+                              OrderProvider
+                                  .instance.directions!.totalDuration!),
+                          bookingDetailsListTab(
+                              'Nacin placanja',
+                              OrderProvider.instance.paymentMethod ==
+                                      PaymentMethod.CASH
+                                  ? 'Gotovina'
+                                  : 'Online'),
+                          bookingDetailsListTab(
+                              'Cijena',
+                              OrderProvider.instance.orderPrice.toString() +
+                                  ' BAM'),
+                          sh(8),
                         ],
                       ),
                     ),
@@ -251,20 +295,20 @@ class TaxiRideBooked extends StatelessWidget {
       ],
     );
   }
+}
 
-  Widget bookingDetailsListTab(String title, String desc) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(title),
-          Text(
-            desc,
-            style: TextStyle(color: primaryColor),
-          )
-        ],
-      ),
-    );
-  }
+Widget bookingDetailsListTab(String title, String desc) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 4.0),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(title),
+        Text(
+          desc,
+          style: TextStyle(color: primaryColor),
+        )
+      ],
+    ),
+  );
 }

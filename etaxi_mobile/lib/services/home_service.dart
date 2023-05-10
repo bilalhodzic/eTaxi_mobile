@@ -26,15 +26,13 @@ class HomeService {
     }
   }
 
-  static Future<List<VehicleModel>> getSelfDrivingVehicles() async {
+  static Future<List<VehicleModel>> getVehicles() async {
     List<VehicleModel> vehicles = [];
     try {
-      Response res = await ApiModels().getRequest(url: 'vehicle');
-      print(res.statusCode);
+      Response res = await ApiModels().getRequest(url: 'api/Vehicle');
 
       if (res.statusCode == 200) {
         var data = json.decode(res.body);
-        inspect(data);
         data.forEach((element) {
           vehicles.add(VehicleModel.fromJson(element));
         });

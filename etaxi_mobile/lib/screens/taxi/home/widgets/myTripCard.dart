@@ -1,3 +1,4 @@
+import 'package:etaxi_mobile/models/order_model.dart';
 import 'package:etaxi_mobile/utils/colors.dart';
 import 'package:etaxi_mobile/utils/sizeConfig.dart';
 import 'package:flutter/material.dart';
@@ -5,8 +6,10 @@ import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 
 class MyTripCard extends StatelessWidget {
+  Order order;
   MyTripCard({
     Key? key,
+    required this.order,
   }) : super(key: key);
 
   @override
@@ -40,20 +43,15 @@ class MyTripCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Ime musterije',
+                      (order.user?.firstName ?? '') +
+                          ' ' +
+                          (order.user?.lastName ?? ''),
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                     sh(3),
-                    Text(
-                      "Broj musrterije",
-                      style: TextStyle(
-                        color: Color(0xffa7a7a7),
-                        fontSize: 10,
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -123,15 +121,16 @@ class MyTripCard extends StatelessWidget {
                       child: Row(
                         children: [
                           SvgPicture.asset(
-                            "assets/icons/distance.svg",
-                            width: 10,
+                            "assets/icons/cash.svg",
+                            width: 12,
                             color: Colors.black,
                           ),
                           sb(8),
                           Text(
-                            'KILOMETARA' + " KM",
+                            "Nacin placanja",
                             style: TextStyle(
                               fontSize: 10,
+                              letterSpacing: 0.6,
                             ),
                           ),
                         ],
@@ -146,14 +145,8 @@ class MyTripCard extends StatelessWidget {
                       flex: 3,
                       child: Row(
                         children: [
-                          SvgPicture.asset(
-                            "assets/icons/clock.svg",
-                            width: 12,
-                            color: Colors.black,
-                          ),
-                          sb(8),
                           Text(
-                            DateFormat('dd.MM.yyyy').format(DateTime.now()),
+                            DateFormat('dd.MM.yyyy').format(order.startTime!),
                             style: TextStyle(
                               fontSize: 10,
                               letterSpacing: 0.6,
@@ -166,14 +159,8 @@ class MyTripCard extends StatelessWidget {
                       flex: 2,
                       child: Row(
                         children: [
-                          SvgPicture.asset(
-                            "assets/icons/cash.svg",
-                            width: 12,
-                            color: Colors.black,
-                          ),
-                          sb(8),
                           Text(
-                            'placanje',
+                            order.paymentMethod ?? '',
                             style: TextStyle(
                               fontSize: 10,
                               letterSpacing: 0.6,
@@ -205,7 +192,7 @@ class MyTripCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'oklena je posao',
+                            order.startLocation?.address ?? '',
                             style: TextStyle(
                               fontSize: 12,
                             ),
@@ -235,7 +222,7 @@ class MyTripCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "adresa na koju je dosao",
+                            order.endLocation?.address ?? '',
                             style: TextStyle(
                               fontSize: 12,
                             ),
@@ -282,7 +269,7 @@ class MyTripCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      "TOTAL FARE",
+                      "UKUPNO",
                       style: TextStyle(
                         fontSize: 10,
                         letterSpacing: 0.6,
@@ -292,7 +279,7 @@ class MyTripCard extends StatelessWidget {
                     ),
                     sh(2),
                     Text(
-                      "\$" + 'ukupan trosak',
+                      "${order.price} BAM}",
                       style: TextStyle(
                         fontSize: 18,
                         letterSpacing: 0.6,

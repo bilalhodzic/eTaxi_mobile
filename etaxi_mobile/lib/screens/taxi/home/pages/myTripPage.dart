@@ -1,4 +1,9 @@
+import 'dart:developer';
+
+import 'package:etaxi_mobile/providers/auth_provider.dart';
+import 'package:etaxi_mobile/providers/order_provider.dart';
 import 'package:etaxi_mobile/screens/taxi/home/widgets/myTripCard.dart';
+import 'package:etaxi_mobile/services/order_services.dart';
 import 'package:etaxi_mobile/utils/sizeConfig.dart';
 import 'package:flutter/material.dart';
 
@@ -98,7 +103,7 @@ class _MyTripPageState extends State<MyTripPage> {
               ),
             ),
             title: Text(
-              "Moja putovanja",
+              "Moje narudžbe",
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
@@ -113,15 +118,29 @@ class _MyTripPageState extends State<MyTripPage> {
                 children: [
                   sh(20),
                   Expanded(
-                      child: ListView.builder(
-                    padding: EdgeInsets.only(top: 10),
-                    shrinkWrap: true,
-                    itemCount: 5,
-                    physics: BouncingScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      return InkWell(onTap: () {}, child: MyTripCard());
-                    },
-                  )),
+                      child: FutureBuilder(
+                          future: OrderServices.getOrders(queryParams: {
+                            'UserId': AuthProvider.instance.user?.id.toString()
+                          }),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.done)
+                              return ListView.builder(
+                                padding: EdgeInsets.only(top: 10),
+                                shrinkWrap: true,
+                                itemCount: OrderProvider.instance.orders.length,
+                                physics: BouncingScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  var order =
+                                      OrderProvider.instance.orders[index];
+                                  return InkWell(
+                                      onTap: () {},
+                                      child: MyTripCard(order: order));
+                                },
+                              );
+                            else
+                              return Center(child: CircularProgressIndicator());
+                          })),
                 ],
               ),
             ),

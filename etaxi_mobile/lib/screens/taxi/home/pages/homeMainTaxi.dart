@@ -1,4 +1,7 @@
+import 'package:etaxi_mobile/screens/commonPages/trackCarPage.dart';
+import 'package:etaxi_mobile/screens/settings.dart';
 import 'package:etaxi_mobile/screens/taxi/home/pages/homeTaxi.dart';
+import 'package:etaxi_mobile/screens/taxi/home/pages/myTripPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -21,7 +24,7 @@ class _HomeMainTaxiState extends State<HomeMainTaxi> {
 
   List<String> _menuIcons = [
     'assets/icons/home.svg',
-    'assets/icons/location.svg',
+    //  'assets/icons/location.svg',
     'assets/icons/history.svg',
     'assets/icons/settings.svg',
   ];
@@ -29,11 +32,11 @@ class _HomeMainTaxiState extends State<HomeMainTaxi> {
   Widget build(BuildContext context) {
     List<Widget> _screens = [
       HomeTaxi(),
-      // TrackCarPage(),
-      // MyTripPage(),
-      // Settings(
-      //   isTaxi: true,
-      // )
+      //  TrackCarPage(),
+      MyTripPage(),
+      Settings(
+        isTaxi: true,
+      )
     ];
 
     return Scaffold(

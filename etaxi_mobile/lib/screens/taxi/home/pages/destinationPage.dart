@@ -80,7 +80,8 @@ class _DestinationPageState extends State<DestinationPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    OrderProvider.instance.currentAddress ??
+                                    OrderProvider.instance.currentLocationData
+                                            ?.address ??
                                         "Trenutna lokacija",
                                     style: TextStyle(
                                       fontSize: 12,
@@ -112,7 +113,8 @@ class _DestinationPageState extends State<DestinationPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    OrderProvider.instance.destinationAddress ??
+                                    OrderProvider.instance
+                                            .destinationLocationData?.address ??
                                         "",
                                     style: TextStyle(
                                       fontSize: 12,

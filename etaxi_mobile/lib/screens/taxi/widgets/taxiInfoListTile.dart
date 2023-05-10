@@ -1,5 +1,11 @@
+import 'dart:developer';
+
+import 'package:etaxi_mobile/providers/order_provider.dart';
+import 'package:etaxi_mobile/services/home_service.dart';
 import 'package:etaxi_mobile/utils/colors.dart';
 import 'package:etaxi_mobile/utils/sizeConfig.dart';
+import 'package:etaxi_mobile/widgets/cached_image.dart';
+import 'package:etaxi_mobile/widgets/vehicle_card.dart';
 import 'package:flutter/material.dart';
 
 class TaxiInfoListTile extends StatelessWidget {
@@ -11,10 +17,10 @@ class TaxiInfoListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var h = SizeConfig.screenHeight / 812;
     return Padding(
       padding: padding,
       child: Container(
-        height: 75,
         width: double.infinity,
         decoration: BoxDecoration(
           color: Colors.white,
@@ -28,50 +34,78 @@ class TaxiInfoListTile extends StatelessWidget {
             ),
           ],
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                color: Colors.red,
-                width: 67,
-                child: Center(child: Text("Slika taxia")),
-              ),
-              sb(8),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Ime taxia',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                    ),
-                    Expanded(
-                      child: Wrap(
-                        runSpacing: 4,
-                        spacing: 4,
-                        children: [
-                          Text('taxi features'),
-                          Text('taxi features'),
-                          Text('taxi features'),
-                          Text('taxi features'),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              sb(12),
-              Text(
-                'cijena BAM',
-                style:
-                    TextStyle(fontWeight: FontWeight.w700, color: primaryColor),
-              )
-            ],
-          ),
-        ),
+        child: FutureBuilder(
+            future: HomeService.getVehicles(),
+            builder: ((context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done)
+                return ListView.builder(
+                    padding: EdgeInsets.only(top: 5),
+                    shrinkWrap: true,
+                    itemCount: snapshot.data!.length,
+                    //physics: NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      var vehicle = snapshot.data![index];
+                      return InkWell(
+                        onTap: () {
+                          OrderProvider.instance.setSelectedVehicle(vehicle);
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(4),
+                              border: vehicle.vehicleId ==
+                                      OrderProvider
+                                          .instance.selectedVehicle?.vehicleId
+                                  ? Border.all(color: primaryColor)
+                                  : null),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  width: 67,
+                                  child: Center(
+                                    child: CachedImage(
+                                      imgUrl: vehicle.photo!,
+                                      height: h * 50,
+                                      width: SizeConfig.screenWidth,
+                                      vehicleId: vehicle.vehicleId.toString(),
+                                    ),
+                                  ),
+                                ),
+                                sb(8),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        vehicle.vehicleName!,
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                sb(12),
+                                Text(
+                                  '${vehicle.price} BAM/km',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      color: primaryColor),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    });
+              else
+                return Center(child: CircularProgressIndicator());
+            })),
       ),
     );
   }

@@ -1,11 +1,16 @@
+import 'dart:developer';
+
 import 'package:etaxi_mobile/models/directions_model.dart';
+import 'package:etaxi_mobile/models/location_model.dart';
+import 'package:etaxi_mobile/models/order_model.dart';
+import 'package:etaxi_mobile/models/vehicle_model.dart';
 import 'package:etaxi_mobile/screens/taxi/widgets/googleMapWidget.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-enum TaxiServiceType { LOCAL, OUTSTATION }
-
 enum BookingStage { PICKUP, DESTINATION, VEHICLES, RIDE_BOOKED }
+
+enum PaymentMethod { CASH, ONLINE }
 
 class OrderProvider extends ChangeNotifier {
   //singleton
@@ -21,28 +26,52 @@ class OrderProvider extends ChangeNotifier {
   OrderProvider._();
 
   //Taxi order part START
-  TaxiServiceType taxiServiceType = TaxiServiceType.LOCAL;
-  LatLng? currentLocation;
-  String? currentAddress;
-
-  LatLng? destinationLocation;
-  String? destinationAddress;
-
+  Location? currentLocationData;
+  Location? destinationLocationData;
   Directions? directions;
+
+  VehicleModel? selectedVehicle;
+  double? orderPrice;
 
   BookingStage stage = BookingStage.PICKUP;
 
-  String paymentMethod = 'Online';
+  PaymentMethod paymentMethod = PaymentMethod.CASH;
+
+  List<Order> orders = [];
 
 //sets the value for taxi service type which can be selected on HomeMainTaxi page
-  void setTaxiServiceType(TaxiServiceType type) {
-    taxiServiceType = type;
+
+  void setOrderPrice(double price) {
+    orderPrice = price;
     notifyListeners();
   }
 
-  void setPaymentMethod(String method) {
+  void setOrders(List<Order> ordersData) {
+    orders = ordersData;
+    notifyListeners();
+  }
+
+  void setSelectedVehicle(VehicleModel vehicle) {
+    selectedVehicle = vehicle;
+    notifyListeners();
+  }
+
+  void setPaymentMethod(PaymentMethod method) {
     paymentMethod = method;
     notifyListeners();
+  }
+
+  String calculateTotalPrice() {
+    double total = 0;
+    if (directions != null) {
+      //parse total distance from directions into double number
+      double distanceNumber = double.tryParse(directions!.totalDistance!
+              .substring(0, directions!.totalDistance!.indexOf("km"))) ??
+          1;
+      total = distanceNumber * selectedVehicle!.price!;
+    }
+    setOrderPrice(total);
+    return total.toStringAsFixed(2) + " BAM";
   }
 
   void setBookingStage(BookingStage stage) {
@@ -50,19 +79,19 @@ class OrderProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future setCurrentLoc(LatLng loc, String add) async {
-    currentLocation = loc;
-    currentAddress = add;
-    await mapController?.animateCamera(
-        CameraUpdate.newCameraPosition(CameraPosition(target: loc, zoom: 15)));
+  Future setCurrentLoc(Location loc) async {
+    currentLocationData = loc;
+    await mapController?.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(
+            target: LatLng(loc.latitude!, loc.longitude!), zoom: 15)));
     notifyListeners();
   }
 
-  Future setDestinationLoc(LatLng loc, String add) async {
-    destinationLocation = loc;
-    destinationAddress = add;
-    await mapController?.animateCamera(
-        CameraUpdate.newCameraPosition(CameraPosition(target: loc, zoom: 15)));
+  Future setDestinationLoc(Location loc) async {
+    destinationLocationData = loc;
+    await mapController?.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(
+            target: LatLng(loc.latitude!, loc.longitude!), zoom: 15)));
 
     notifyListeners();
   }
@@ -84,12 +113,12 @@ class OrderProvider extends ChangeNotifier {
 
   void resetToInit([bool shouldNotify = false]) {
     stage = BookingStage.PICKUP;
-    taxiServiceType = TaxiServiceType.LOCAL;
 
-    destinationLocation = null;
-    destinationAddress = null;
+    destinationLocationData = null;
     directions = null;
-    paymentMethod = 'Online';
+    paymentMethod = PaymentMethod.CASH;
+    selectedVehicle = null;
+    orderPrice = null;
 
     if (shouldNotify) notifyListeners();
   }
