@@ -29,13 +29,13 @@ class MyTripCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Padding(
-                padding: EdgeInsets.only(top: 13, left: 20),
-                child: Container(
-                  height: 60,
-                  width: 60,
-                ),
-              ),
+              // Padding(
+              //   padding: EdgeInsets.only(top: 13, left: 20),
+              //   child: Container(
+              //     height: 60,
+              //     width: 60,
+              //   ),
+              // ),
               sb(10),
               Padding(
                 padding: EdgeInsets.only(top: 13),
@@ -43,7 +43,8 @@ class MyTripCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      (order.user?.firstName ?? '') +
+                      "Korisnik: " +
+                          (order.user?.firstName ?? '') +
                           ' ' +
                           (order.user?.lastName ?? ''),
                       style: TextStyle(
@@ -56,17 +57,16 @@ class MyTripCard extends StatelessWidget {
                 ),
               ),
               Spacer(),
-              //PROMJENITI OVO KADA SE SPOJI SA BEKENDOM
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 30, vertical: 7),
                 decoration: BoxDecoration(
-                  color: tagColor('CompletedLabel'),
+                  color: tagColor(generateOrderStatus(order)),
                   borderRadius: BorderRadius.only(
                     bottomRight: Radius.circular(5),
                   ),
                 ),
                 child: Text(
-                  'CompletedLabel',
+                  generateOrderStatus(order),
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 14,
@@ -247,23 +247,23 @@ class MyTripCard extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: [
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 9,
-                    vertical: 5,
-                  ),
-                  decoration: BoxDecoration(
-                    color: primaryColor,
-                    borderRadius: BorderRadius.circular(11),
-                  ),
-                  child: Text(
-                    "Ma ja " + " Fare",
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.black.withOpacity(0.8),
-                    ),
-                  ),
-                ),
+                // Container(
+                //   padding: EdgeInsets.symmetric(
+                //     horizontal: 9,
+                //     vertical: 5,
+                //   ),
+                //   decoration: BoxDecoration(
+                //     color: primaryColor,
+                //     borderRadius: BorderRadius.circular(11),
+                //   ),
+                //   child: Text(
+                //     "Ma ja " + " Fare",
+                //     style: TextStyle(
+                //       fontSize: 12,
+                //       color: Colors.black.withOpacity(0.8),
+                //     ),
+                //   ),
+                // ),
                 Spacer(),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -279,7 +279,7 @@ class MyTripCard extends StatelessWidget {
                     ),
                     sh(2),
                     Text(
-                      "${order.price} BAM}",
+                      "${order.price} BAM",
                       style: TextStyle(
                         fontSize: 18,
                         letterSpacing: 0.6,
@@ -300,12 +300,22 @@ class MyTripCard extends StatelessWidget {
 }
 
 Color tagColor(String type) {
-  if (type == 'CancelledLabel')
+  if (type == 'Otkazana')
     return Color(0xffc22a23);
-  else if (type == 'CompletedLabel')
+  else if (type == 'Aktivna')
     return Color(0xff14ce5e);
-  else if (type == "Assigned")
-    return Color(0xff55a3ff);
-  else if (type == "Ongoing") return secondaryColor;
+  // else if (type == "Assigned")
+  //   return Color(0xff55a3ff);
+  else if (type == "Neaktivna") return secondaryColor;
   return Color(0xff395185);
+}
+
+String generateOrderStatus(Order order) {
+  if (order.isCanceled == true) {
+    return 'Otkazana';
+  }
+  if (order.isActive != true) {
+    return "Neaktivna";
+  } else
+    return 'Aktivna';
 }

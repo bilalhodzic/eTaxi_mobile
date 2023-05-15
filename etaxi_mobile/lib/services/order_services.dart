@@ -36,7 +36,8 @@ class OrderServices {
       "endLocationId": await createLocation(endLocationData),
       "vehicleId": vehicle.vehicleId,
       "isSelfDrive": isSelfDrive,
-      "startTime": DateTime.now().toIso8601String(),
+      "startTime": OrderProvider.instance.startTime?.toIso8601String() ??
+          DateTime.now().toIso8601String(),
       "price": OrderProvider.instance.orderPrice,
       "paymentMethod":
           OrderProvider.instance.paymentMethod == PaymentMethod.CASH
@@ -45,10 +46,13 @@ class OrderServices {
     };
 
     try {
+      if (OrderProvider.instance.paymentMethod == PaymentMethod.ONLINE) {
+        await createStripePayment();
+      }
       Response res =
           await ApiModels().postRequest(url: 'api/Order', data: dataToSend);
       if (res.statusCode == 200) {
-        OrderProvider.instance.setBookingStage(BookingStage.RIDE_BOOKED);
+        return res;
       }
     } catch (e) {
       print(e);
@@ -62,6 +66,59 @@ class OrderServices {
           await ApiModels().postRequest(url: 'api/Location', data: data);
       if (res.statusCode == 200) {
         return jsonDecode(res.body);
+      }
+    } catch (e) {
+      print(e);
+      throw e;
+    }
+  }
+
+  static Future addStripeCustomer() async {
+    var addCustomerData = {
+      "email": AuthProvider.instance.user!.email,
+      "name": AuthProvider.instance.user!.firstName! +
+          " " +
+          AuthProvider.instance.user!.lastName!,
+      "creditCard": {
+        "name": OrderProvider.instance.creditCardModel!.cardHolderName,
+        "cardNumber": OrderProvider.instance.creditCardModel!.cardNumber,
+        "expirationMonth":
+            OrderProvider.instance.creditCardModel!.expiryDate.substring(0, 2),
+        "expirationYear":
+            OrderProvider.instance.creditCardModel!.expiryDate.substring(3),
+        "cvc": OrderProvider.instance.creditCardModel!.cvvCode,
+      }
+    };
+    try {
+      Response res = await ApiModels()
+          .postRequest(url: 'api/Stripe/customer/add', data: addCustomerData);
+      if (res.statusCode == 200) {
+        return jsonDecode(res.body);
+      }
+    } catch (e) {
+      print(e);
+      throw e;
+    }
+  }
+
+  static Future createStripePayment() async {
+    var customer = await addStripeCustomer();
+    var addPaymentData = {
+      "customerId": customer["customerId"],
+      "receiptEmail": customer["email"],
+      "description": "eTaxi Narudžba",
+      "currency": "BAM",
+      "amount": int.parse(
+          (OrderProvider.instance.orderPrice! * 100).toStringAsFixed(0))
+    };
+    try {
+      Response res = await ApiModels()
+          .postRequest(url: 'api/Stripe/payment/add', data: addPaymentData);
+      inspect(res);
+      if (res.statusCode == 200) {
+        return jsonDecode(res.body);
+      } else {
+        throw jsonDecode(res.body);
       }
     } catch (e) {
       print(e);

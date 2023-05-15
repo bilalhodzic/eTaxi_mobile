@@ -6,6 +6,7 @@ import 'package:etaxi_mobile/models/order_model.dart';
 import 'package:etaxi_mobile/models/vehicle_model.dart';
 import 'package:etaxi_mobile/screens/taxi/widgets/googleMapWidget.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_credit_card/credit_card_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 enum BookingStage { PICKUP, DESTINATION, VEHICLES, RIDE_BOOKED }
@@ -30,6 +31,8 @@ class OrderProvider extends ChangeNotifier {
   Location? destinationLocationData;
   Directions? directions;
 
+  DateTime? startTime;
+
   VehicleModel? selectedVehicle;
   double? orderPrice;
 
@@ -39,10 +42,23 @@ class OrderProvider extends ChangeNotifier {
 
   List<Order> orders = [];
 
+  //Credit card fields;
+  CreditCardModel? creditCardModel;
+
 //sets the value for taxi service type which can be selected on HomeMainTaxi page
 
-  void setOrderPrice(double price) {
+  void setCreditCardModel(CreditCardModel? model) {
+    creditCardModel = model;
+    notifyListeners();
+  }
+
+  void setOrderPrice(double price, {bool notify = true}) {
     orderPrice = price;
+    if (notify) notifyListeners();
+  }
+
+  void setStartTime(DateTime? time) {
+    startTime = time;
     notifyListeners();
   }
 
@@ -70,7 +86,7 @@ class OrderProvider extends ChangeNotifier {
           1;
       total = distanceNumber * selectedVehicle!.price!;
     }
-    setOrderPrice(total);
+    setOrderPrice(total, notify: false);
     return total.toStringAsFixed(2) + " BAM";
   }
 
@@ -119,6 +135,7 @@ class OrderProvider extends ChangeNotifier {
     paymentMethod = PaymentMethod.CASH;
     selectedVehicle = null;
     orderPrice = null;
+    DateTime? startTime = null;
 
     if (shouldNotify) notifyListeners();
   }

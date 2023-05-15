@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:etaxi_mobile/providers/auth_provider.dart';
 import 'package:etaxi_mobile/screens/commonPages/contactUs.dart';
 import 'package:etaxi_mobile/screens/commonPages/profile.dart';
+import 'package:etaxi_mobile/screens/login.dart';
 import 'package:etaxi_mobile/screens/mode_selector.dart';
 import 'package:etaxi_mobile/screens/reset_password.dart';
 import 'package:etaxi_mobile/utils/colors.dart';
@@ -67,7 +69,13 @@ class _SettingsState extends State<Settings> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(5),
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          AuthProvider.instance.reset();
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => LoginScreen()));
+                        },
                         child: Container(
                           padding: EdgeInsets.symmetric(vertical: 15),
                           decoration: BoxDecoration(

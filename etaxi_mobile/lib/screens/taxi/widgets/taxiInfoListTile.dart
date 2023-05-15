@@ -42,7 +42,6 @@ class TaxiInfoListTile extends StatelessWidget {
                     padding: EdgeInsets.only(top: 5),
                     shrinkWrap: true,
                     itemCount: snapshot.data!.length,
-                    //physics: NeverScrollableScrollPhysics(),
                     itemBuilder: (context, index) {
                       var vehicle = snapshot.data![index];
                       return InkWell(

@@ -5,6 +5,7 @@ import 'package:etaxi_mobile/models/vehicle_model.dart';
 class Order {
   int? id;
   bool? isActive;
+  bool? isCanceled;
   int? userDriverId;
   int? userId;
   Userinfo? user;
@@ -28,7 +29,8 @@ class Order {
       this.isSelfDrive,
       this.startTime,
       this.paymentMethod,
-      this.user});
+      this.user,
+      this.isCanceled});
 
   factory Order.fromJson(Map<String, dynamic> json) => Order(
       id: json["id"],
@@ -42,5 +44,6 @@ class Order {
       isSelfDrive: json["isSelfDrive"],
       startTime: DateTime.parse(json["startTime"]),
       paymentMethod: json["paymentMethod"],
+      isCanceled: json["isCanceled"],
       user: Userinfo.fromJson(json["user"]));
 }

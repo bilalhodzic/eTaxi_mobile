@@ -48,9 +48,10 @@ class TaxiRideBooked extends StatelessWidget {
                           future: AuthServices.getUser(OrderProvider
                               .instance.selectedVehicle!.driverId!),
                           builder: (context, snapshot) {
-                            Userinfo driver = Userinfo.fromJson(snapshot.data);
                             if (snapshot.connectionState ==
-                                ConnectionState.done)
+                                ConnectionState.done) {
+                              Userinfo driver =
+                                  Userinfo.fromJson(snapshot.data);
                               return Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
@@ -132,7 +133,7 @@ class TaxiRideBooked extends StatelessWidget {
                                   )
                                 ],
                               );
-                            else
+                            } else
                               return Center(
                                 child: CircularProgressIndicator(),
                               );

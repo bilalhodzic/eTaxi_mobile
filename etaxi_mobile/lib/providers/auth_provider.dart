@@ -41,4 +41,11 @@ class AuthProvider extends ChangeNotifier {
     token = token;
     notifyListeners();
   }
+
+  reset() {
+    _user = null;
+    token = null;
+    loginError = null;
+    registerError = null;
+  }
 }

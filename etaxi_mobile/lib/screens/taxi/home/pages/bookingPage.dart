@@ -1,12 +1,15 @@
 import 'dart:developer';
 
+import 'package:date_time_picker/date_time_picker.dart';
 import 'package:etaxi_mobile/providers/auth_provider.dart';
 import 'package:etaxi_mobile/providers/order_provider.dart';
+import 'package:etaxi_mobile/screens/commonPages/addCardPage.dart';
 import 'package:etaxi_mobile/screens/taxi/home/pages/taxiRideBookedPage.dart';
 import 'package:etaxi_mobile/screens/taxi/widgets/taxiInfoListTile.dart';
 import 'package:etaxi_mobile/services/order_services.dart';
 import 'package:etaxi_mobile/utils/colors.dart';
 import 'package:etaxi_mobile/utils/sizeConfig.dart';
+import 'package:etaxi_mobile/utils/utilFunctions.dart';
 import 'package:etaxi_mobile/widgets/app_snack_bar.dart';
 import 'package:etaxi_mobile/widgets/custom_button.dart';
 import 'package:etaxi_mobile/widgets/custom_text_field.dart';
@@ -166,6 +169,32 @@ class BookingPage extends StatelessWidget {
                       child: CustomButton(
                           label: 'Primijeni promo kod', onPressed: () {}),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 15, 16, 0),
+                      child: Text(
+                        "Vrijeme narudzbe",
+                      ),
+                    ),
+                    Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: DateTimePicker(
+                          initialValue: dateFormat(
+                                  OrderProvider.instance.startTime ??
+                                      DateTime.now()) +
+                              " " +
+                              timeFormatDate(OrderProvider.instance.startTime ??
+                                  DateTime.now()),
+                          dateMask: "dd.MM.yyyy HH:mm",
+                          type: DateTimePickerType.dateTime,
+                          initialDate: OrderProvider.instance.startTime ??
+                              DateTime.now(),
+                          firstDate: DateTime.now(),
+                          lastDate: DateTime.now().add(Duration(days: 5)),
+                          onChanged: (newValue) {
+                            OrderProvider.instance
+                                .setStartTime(DateTime.parse(newValue));
+                          },
+                        )),
                     if (OrderProvider.instance.selectedVehicle != null)
                       Container(
                         margin: EdgeInsets.symmetric(
@@ -229,6 +258,21 @@ class BookingPage extends StatelessWidget {
                         ),
                       ),
                     ),
+                    if (OrderProvider.instance.paymentMethod ==
+                        PaymentMethod.ONLINE)
+                      Padding(
+                        padding:
+                            const EdgeInsets.only(left: 16, top: 12, right: 16),
+                        child: CustomButton(
+                          label: "Dodaj detalje kartice",
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => AddCardPage()));
+                          },
+                        ),
+                      ),
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 16),
@@ -236,11 +280,20 @@ class BookingPage extends StatelessWidget {
                         height: 40,
                         minWidth: double.infinity,
                         color: Colors.black,
-                        onPressed: () {
+                        onPressed: () async {
                           if (OrderProvider.instance.selectedVehicle == null) {
                             return appSnackBar(
                                 context: context,
                                 msg: "Molimo izaberite svoj taxi",
+                                isError: true);
+                          }
+                          if (OrderProvider.instance.paymentMethod ==
+                                  PaymentMethod.ONLINE &&
+                              OrderProvider.instance.creditCardModel == null) {
+                            return appSnackBar(
+                                context: context,
+                                msg:
+                                    "Molimo dodajte detalje kartice ili odaberite drugi nacin placanja",
                                 isError: true);
                           }
                           if (AuthProvider.instance.user?.id ==
@@ -253,7 +306,39 @@ class BookingPage extends StatelessWidget {
                           }
 
                           try {
-                            OrderServices.createOrder();
+                            await OrderServices.createOrder();
+                            appSnackBar(
+                                context: context,
+                                msg: "Vasa narudzba je uspjesno kreirana",
+                                isError: false);
+
+                            //animate accepted order
+                            await Future.delayed(Duration(seconds: 1));
+                            showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (builder) => AlertDialog(
+                                      title:
+                                          Text("Vasa narudzba je prihvacena"),
+                                      actions: [
+                                        TextButton(
+                                            onPressed: () {
+                                              OrderProvider.instance
+                                                  .setBookingStage(
+                                                      BookingStage.PICKUP);
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text("Nazad")),
+                                        TextButton(
+                                            onPressed: () {
+                                              OrderProvider.instance
+                                                  .setBookingStage(
+                                                      BookingStage.RIDE_BOOKED);
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text("Pregledaj narudzbu"))
+                                      ],
+                                    ));
                           } catch (e) {
                             appSnackBar(
                                 context: context,
