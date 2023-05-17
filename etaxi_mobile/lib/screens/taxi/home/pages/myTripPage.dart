@@ -16,10 +16,6 @@ class MyTripPage extends StatefulWidget {
   State<MyTripPage> createState() => _MyTripPageState();
 }
 
-Map<String, dynamic> defaultFilter = {
-  'UserId': AuthProvider.instance.user?.id.toString()
-};
-
 class _MyTripPageState extends State<MyTripPage> {
   List<String> types = [
     'Sve',
@@ -28,7 +24,9 @@ class _MyTripPageState extends State<MyTripPage> {
     'Otkazane',
   ];
 
-  Map<String, dynamic> orderFilter = defaultFilter;
+  var defaultFilter = {'UserId': AuthProvider.instance.user?.id.toString()};
+
+  late Map<String, dynamic> orderFilter = defaultFilter;
 
   String label(String title) {
     if (title == 'Neaktivne')

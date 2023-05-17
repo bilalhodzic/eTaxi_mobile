@@ -4,7 +4,7 @@ import 'package:etaxi_mobile/providers/auth_provider.dart';
 import 'package:etaxi_mobile/screens/forgot_password.dart';
 import 'package:etaxi_mobile/screens/mode_selector.dart';
 import 'package:etaxi_mobile/screens/register.dart';
-import 'package:etaxi_mobile/services/auth_services.dart';
+import 'package:etaxi_mobile/services/user_services.dart';
 import 'package:etaxi_mobile/services/home_service.dart';
 import 'package:etaxi_mobile/utils/colors.dart';
 import 'package:etaxi_mobile/utils/sizeConfig.dart';
@@ -43,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
       'password': pwdController.text
     };
     try {
-      await AuthServices.loginService(dataToSend);
+      await UserServices.loginService(dataToSend);
 
       // HomeService.getHubs();
       Navigator.of(context).pushReplacement(

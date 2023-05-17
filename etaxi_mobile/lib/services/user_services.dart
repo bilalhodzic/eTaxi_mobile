@@ -8,7 +8,7 @@ import 'package:flutter/animation.dart';
 import 'package:http/http.dart';
 import 'package:jwt_decode/jwt_decode.dart';
 
-class AuthServices {
+class UserServices {
   static Future loginService(data) async {
     Response res =
         await ApiModels().postRequest(url: 'api/Auth/login', data: data);
@@ -59,8 +59,18 @@ class AuthServices {
   static Future getUser(int id) async {
     try {
       Response res = await ApiModels().getRequest(url: 'api/User/$id');
-
       return jsonDecode(res.body);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  static Future uploadUserFiles(List<String> filePaths) async {
+    try {
+      for (var i = 0; i < filePaths.length; i++) {
+        await ApiModels().addFile(filePaths[i], AuthProvider.instance.user!.id!,
+            type: "Documents");
+      }
     } catch (e) {
       throw e;
     }

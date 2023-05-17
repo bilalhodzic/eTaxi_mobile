@@ -34,4 +34,32 @@ class ApiModels {
     );
     return response;
   }
+
+  Future addFile(String filePath, int userId,
+      {String? type, int? feedbackId}) async {
+    var request = http.MultipartRequest(
+      'POST',
+      Uri.https(
+        apiUrl,
+        "api/File",
+      ),
+    );
+
+    request.headers["Content-Type"] = "multipart/form-data";
+    request.headers["accept"] = "text/plain";
+
+    request.files.add(await http.MultipartFile.fromPath('File', filePath));
+
+    request.fields["UserId"] = userId.toString();
+    request.fields["Type"] = type ?? '';
+    if (feedbackId != null)
+      request.fields["FeedbackId"] = feedbackId.toString();
+
+    http.Response res = await http.Response.fromStream(await request.send());
+    if (res.statusCode == 200) {
+      return jsonDecode(res.body);
+    } else {
+      throw jsonDecode(res.body)['title'];
+    }
+  }
 }

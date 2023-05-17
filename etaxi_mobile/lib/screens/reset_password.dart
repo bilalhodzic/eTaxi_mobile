@@ -1,4 +1,4 @@
-import 'package:etaxi_mobile/services/auth_services.dart';
+import 'package:etaxi_mobile/services/user_services.dart';
 import 'package:etaxi_mobile/utils/sizeConfig.dart';
 import 'package:etaxi_mobile/widgets/app_snack_bar.dart';
 import 'package:etaxi_mobile/widgets/custom_button.dart';
@@ -37,7 +37,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       };
 
       try {
-        await AuthServices.resetPassword(dataToSend);
+        await UserServices.resetPassword(dataToSend);
 
         appSnackBar(
           context: context,

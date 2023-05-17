@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:etaxi_mobile/screens/reset_password.dart';
-import 'package:etaxi_mobile/services/auth_services.dart';
+import 'package:etaxi_mobile/services/user_services.dart';
 import 'package:etaxi_mobile/utils/sizeConfig.dart';
 import 'package:etaxi_mobile/widgets/app_snack_bar.dart';
 import 'package:etaxi_mobile/widgets/custom_button.dart';
@@ -29,7 +29,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       final dataToSend = {'email': emailController.text};
 
       try {
-        await AuthServices.forgotPassword(dataToSend);
+        await UserServices.forgotPassword(dataToSend);
 
         appSnackBar(
           context: context,

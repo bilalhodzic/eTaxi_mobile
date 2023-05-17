@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:etaxi_mobile/models/user_model.dart';
 import 'package:etaxi_mobile/providers/order_provider.dart';
-import 'package:etaxi_mobile/services/auth_services.dart';
+import 'package:etaxi_mobile/services/user_services.dart';
 import 'package:etaxi_mobile/utils/colors.dart';
 import 'package:etaxi_mobile/utils/sizeConfig.dart';
 import 'package:etaxi_mobile/widgets/line.dart';
@@ -45,7 +45,7 @@ class TaxiRideBooked extends StatelessWidget {
                         ],
                       ),
                       child: FutureBuilder(
-                          future: AuthServices.getUser(OrderProvider
+                          future: UserServices.getUser(OrderProvider
                               .instance.selectedVehicle!.driverId!),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==

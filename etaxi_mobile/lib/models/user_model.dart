@@ -1,4 +1,5 @@
 import 'dart:ffi';
+import 'package:etaxi_mobile/models/file_model.dart';
 import 'package:flutter/cupertino.dart';
 
 class Userinfo {
@@ -18,6 +19,7 @@ class Userinfo {
   String? email;
   String? phoneCode;
   String? photoUrl;
+  List<FileModel>? files;
 
   Userinfo({
     this.id,
@@ -34,6 +36,7 @@ class Userinfo {
     this.pin,
     this.userType,
     this.verifiedAccount,
+    this.files,
   });
 
   Userinfo.fromJson(Map<String, dynamic> json) {
@@ -42,6 +45,9 @@ class Userinfo {
     lastName = json['lastName'] ?? '';
     pin = json['pin'] ?? 0;
     email = json['email'] ?? '';
+    files = json['files'] != null
+        ? (json['files'] as List).map((i) => FileModel.fromJson(i)).toList()
+        : null;
     //userType = json['UserType'];
     //isActive = json['IsActive'];
     //userCreatedTime = DateTime.parse(json['UserCreatedTime']);
