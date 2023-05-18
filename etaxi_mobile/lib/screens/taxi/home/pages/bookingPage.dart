@@ -179,10 +179,7 @@ class BookingPage extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: DateTimePicker(
                           initialValue: dateFormat(
-                                  OrderProvider.instance.startTime ??
-                                      DateTime.now()) +
-                              " " +
-                              timeFormatDate(OrderProvider.instance.startTime ??
+                              OrderProvider.instance.startTime ??
                                   DateTime.now()),
                           dateMask: "dd.MM.yyyy HH:mm",
                           type: DateTimePickerType.dateTime,
@@ -276,83 +273,91 @@ class BookingPage extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 16),
-                      child: MaterialButton(
-                        height: 40,
-                        minWidth: double.infinity,
-                        color: Colors.black,
-                        onPressed: () async {
-                          if (OrderProvider.instance.selectedVehicle == null) {
-                            return appSnackBar(
-                                context: context,
-                                msg: "Molimo izaberite svoj taxi",
-                                isError: true);
-                          }
-                          if (OrderProvider.instance.paymentMethod ==
-                                  PaymentMethod.ONLINE &&
-                              OrderProvider.instance.creditCardModel == null) {
-                            return appSnackBar(
-                                context: context,
-                                msg:
-                                    "Molimo dodajte detalje kartice ili odaberite drugi nacin placanja",
-                                isError: true);
-                          }
-                          if (AuthProvider.instance.user?.id ==
-                              OrderProvider
-                                  .instance.selectedVehicle!.driverId) {
-                            return appSnackBar(
-                                context: context,
-                                msg: "Ne mozete naruciti svoj taxi",
-                                isError: true);
-                          }
+                      child: CustomButton(
+                          onPressed: () async {
+                            if (OrderProvider.instance.selectedVehicle ==
+                                null) {
+                              return appSnackBar(
+                                  context: context,
+                                  msg: "Molimo izaberite svoj taxi",
+                                  isError: true);
+                            }
+                            if (OrderProvider.instance.paymentMethod ==
+                                    PaymentMethod.ONLINE &&
+                                OrderProvider.instance.creditCardModel ==
+                                    null) {
+                              return appSnackBar(
+                                  context: context,
+                                  msg:
+                                      "Molimo dodajte detalje kartice ili odaberite drugi nacin placanja",
+                                  isError: true);
+                            }
+                            if (AuthProvider.instance.user?.id ==
+                                OrderProvider
+                                    .instance.selectedVehicle!.driverId) {
+                              return appSnackBar(
+                                  context: context,
+                                  msg: "Ne mozete naruciti svoj taxi",
+                                  isError: true);
+                            }
 
-                          try {
-                            await OrderServices.createOrder();
-                            appSnackBar(
-                                context: context,
-                                msg: "Vasa narudzba je uspjesno kreirana",
-                                isError: false);
+                            try {
+                              if (OrderProvider.instance.isEditOrder) {
+                                await OrderServices.updateOrder();
+                                appSnackBar(
+                                    context: context,
+                                    msg: "Vasa narudzba je uspjesno izmjenjena",
+                                    isError: false);
+                                OrderProvider.instance
+                                    .setBookingStage(BookingStage.RIDE_BOOKED);
+                                return;
+                              }
 
-                            //animate accepted order
-                            await Future.delayed(Duration(seconds: 1));
-                            showDialog(
-                                context: context,
-                                barrierDismissible: false,
-                                builder: (builder) => AlertDialog(
-                                      title:
-                                          Text("Vasa narudzba je prihvacena"),
-                                      actions: [
-                                        TextButton(
-                                            onPressed: () {
-                                              OrderProvider.instance
-                                                  .setBookingStage(
-                                                      BookingStage.PICKUP);
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text("Nazad")),
-                                        TextButton(
-                                            onPressed: () {
-                                              OrderProvider.instance
-                                                  .setBookingStage(
-                                                      BookingStage.RIDE_BOOKED);
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text("Pregledaj narudzbu"))
-                                      ],
-                                    ));
-                          } catch (e) {
-                            appSnackBar(
-                                context: context,
-                                msg:
-                                    "Doslo je do greske prilikom kreiranja narduzbe",
-                                isError: true);
-                          }
-                        },
-                        child: Text(
-                          'Naruci voznju'.toUpperCase(),
-                          style: TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.w700),
-                        ),
-                      ),
+                              await OrderServices.createOrder();
+                              appSnackBar(
+                                  context: context,
+                                  msg: "Vasa narudzba je uspjesno kreirana",
+                                  isError: false);
+
+                              //animate accepted order
+                              await Future.delayed(Duration(seconds: 1));
+                              showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (builder) => AlertDialog(
+                                        title:
+                                            Text("Vasa narudzba je prihvacena"),
+                                        actions: [
+                                          TextButton(
+                                              onPressed: () {
+                                                OrderProvider.instance
+                                                    .setBookingStage(
+                                                        BookingStage.PICKUP);
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text("Nazad")),
+                                          TextButton(
+                                              onPressed: () {
+                                                OrderProvider.instance
+                                                    .setBookingStage(
+                                                        BookingStage
+                                                            .RIDE_BOOKED);
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text("Pregledaj narudzbu"))
+                                        ],
+                                      ));
+                            } catch (e) {
+                              appSnackBar(
+                                  context: context,
+                                  msg:
+                                      "Doslo je do greske prilikom kreiranja narduzbe",
+                                  isError: true);
+                            }
+                          },
+                          label: OrderProvider.instance.isEditOrder
+                              ? "Izmjeni narudzbu"
+                              : 'Naruci voznju'),
                     ),
                   ],
                 ),

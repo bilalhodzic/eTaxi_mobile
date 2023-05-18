@@ -5,6 +5,7 @@ import 'package:etaxi_mobile/providers/order_provider.dart';
 import 'package:etaxi_mobile/services/user_services.dart';
 import 'package:etaxi_mobile/utils/colors.dart';
 import 'package:etaxi_mobile/utils/sizeConfig.dart';
+import 'package:etaxi_mobile/widgets/custom_button.dart';
 import 'package:etaxi_mobile/widgets/line.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -16,6 +17,37 @@ class TaxiRideBooked extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        AppBar(
+          centerTitle: true,
+          elevation: 0,
+          leading: InkWell(
+            onTap: () {
+              if (OrderProvider.instance.selectedOrder != null) {
+                Navigator.pop(context);
+              } else {
+                OrderProvider.instance
+                    .setBookingStage(BookingStage.DESTINATION);
+              }
+            },
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                vertical: 22,
+                horizontal: 20,
+              ),
+              child: Icon(
+                Icons.arrow_back_ios_new_rounded,
+                size: 18,
+              ),
+            ),
+          ),
+          title: Text(
+            "Pregled narudzbe",
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
         Spacer(),
         Align(
           alignment: Alignment.bottomCenter,
@@ -275,18 +307,22 @@ class TaxiRideBooked extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 16),
-                      child: MaterialButton(
-                        height: 40,
-                        minWidth: double.infinity,
-                        color: Colors.black,
+                      child: CustomButton(
+                        onPressed: () {
+                          OrderProvider.instance.setIsEditOrder(true);
+                        },
+                        label: 'Izmjeni narudzbu',
+                      ),
+                    ),
+                    line(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 16),
+                      child: CustomButton(
                         onPressed: () {
                           OrderProvider.instance.resetToInit(true);
                         },
-                        child: Text(
-                          'Naruci drugu voznju'.toUpperCase(),
-                          style: TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.w700),
-                        ),
+                        label: 'Naruci drugu voznju',
                       ),
                     )
                   ],

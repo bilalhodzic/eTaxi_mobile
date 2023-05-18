@@ -2,6 +2,8 @@ import 'dart:developer';
 
 import 'package:etaxi_mobile/providers/auth_provider.dart';
 import 'package:etaxi_mobile/providers/order_provider.dart';
+import 'package:etaxi_mobile/screens/taxi/home/pages/homeTaxi.dart';
+import 'package:etaxi_mobile/screens/taxi/home/pages/taxiRideBookedPage.dart';
 import 'package:etaxi_mobile/screens/taxi/home/widgets/myTripCard.dart';
 import 'package:etaxi_mobile/services/order_services.dart';
 import 'package:etaxi_mobile/utils/sizeConfig.dart';
@@ -145,7 +147,16 @@ class _MyTripPageState extends State<MyTripPage> {
                                   var order =
                                       OrderProvider.instance.orders[index];
                                   return InkWell(
-                                      onTap: () {},
+                                      onTap: () {
+                                        OrderProvider.instance
+                                            .setSelectedOrder(order);
+
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (_) => HomeTaxi(),
+                                          ),
+                                        );
+                                      },
                                       child: MyTripCard(order: order));
                                 },
                               );

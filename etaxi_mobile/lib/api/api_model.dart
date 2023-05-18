@@ -22,6 +22,18 @@ class ApiModels {
     return response;
   }
 
+  Future putRequest({required String url, Object data = const {}}) async {
+    final dataJson = jsonEncode(data);
+
+    final uri = Uri.https(apiUrl, url);
+    final response = await http.put(uri,
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+        },
+        body: dataJson);
+    return response;
+  }
+
   Future getRequest(
       {required String url, Map<String, dynamic>? queryParams}) async {
     final uri = Uri.https(apiUrl, url, queryParams);

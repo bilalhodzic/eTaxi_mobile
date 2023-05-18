@@ -52,7 +52,9 @@ class _HomeTaxiState extends State<HomeTaxi> {
 
   @override
   void initState() {
-    setCurrentLocMarker();
+    if (OrderProvider.instance.selectedOrder == null) {
+      setCurrentLocMarker();
+    }
     super.initState();
   }
 
