@@ -77,7 +77,7 @@ class _AddCardPageState extends State<AddCardPage> {
               ),
               sh(20),
               CustomButton(
-                label: 'Nazad',
+                label: 'Spremi',
                 onPressed: () {
                   Navigator.pop(context);
                 },

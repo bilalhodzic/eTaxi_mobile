@@ -1,4 +1,5 @@
 import 'dart:ffi';
+import 'package:etaxi_mobile/models/favorite_model.dart';
 import 'package:etaxi_mobile/models/file_model.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -20,6 +21,7 @@ class Userinfo {
   String? phoneCode;
   String? photoUrl;
   List<FileModel>? files;
+  List<Favorite>? favorites;
 
   Userinfo({
     this.id,
@@ -37,6 +39,7 @@ class Userinfo {
     this.userType,
     this.verifiedAccount,
     this.files,
+    this.favorites,
   });
 
   Userinfo.fromJson(Map<String, dynamic> json) {
@@ -47,6 +50,11 @@ class Userinfo {
     email = json['email'] ?? '';
     files = json['files'] != null
         ? (json['files'] as List).map((i) => FileModel.fromJson(i)).toList()
+        : null;
+    favorites = json['favorites'] != null
+        ? (json['favorites'] as List)
+            .map((favorite) => Favorite.fromJson(favorite))
+            .toList()
         : null;
     //userType = json['UserType'];
     //isActive = json['IsActive'];

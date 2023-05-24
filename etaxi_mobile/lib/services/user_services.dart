@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:etaxi_mobile/api/api_model.dart';
 import 'package:etaxi_mobile/models/user_model.dart';
+import 'package:etaxi_mobile/models/vehicle_model.dart';
 import 'package:etaxi_mobile/providers/auth_provider.dart';
 import 'package:flutter/animation.dart';
 import 'package:http/http.dart';
@@ -70,6 +71,47 @@ class UserServices {
       for (var i = 0; i < filePaths.length; i++) {
         await ApiModels().addFile(filePaths[i], AuthProvider.instance.user!.id!,
             type: "Documents");
+      }
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  static Future addFavoriteCompany(VehicleModel vehicle) async {
+    if (vehicle.companyId == null || vehicle.companyId == 0)
+      throw "Nije moguce dodati vozilo bez kompanije";
+
+    var dataToSend = {
+      "userId": AuthProvider.instance.user!.id,
+      "companyId": vehicle.companyId,
+    };
+    try {
+      Response res =
+          await ApiModels().postRequest(url: 'api/Favorite', data: dataToSend);
+      inspect(res);
+      if (res.statusCode == 200) {
+        return jsonDecode(res.body);
+      } else {
+        throw jsonDecode(res.body)['title'];
+      }
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  static Future deleteFavoriteCompany(int favoriteId) async {
+    if (favoriteId == 0) throw "Nije moguce izbrisati favorita";
+
+    var dataToSend = {
+      "Id": favoriteId,
+    };
+    try {
+      Response res = await ApiModels()
+          .deleteRequest(url: 'api/Favorite/$favoriteId', data: dataToSend);
+      if (res.statusCode == 200) {
+        return jsonDecode(res.body);
+      } else {
+        throw jsonDecode(res.body)['title'];
       }
     } catch (e) {
       throw e;

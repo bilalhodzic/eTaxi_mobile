@@ -16,6 +16,8 @@ class VehicleModel {
   bool? airCondition;
   String? color;
   int? driverId;
+  int? companyId;
+  String? companyName;
 
   VehicleModel(
       {this.vehicleId,
@@ -34,7 +36,9 @@ class VehicleModel {
       this.licenceNumber,
       this.airCondition,
       this.color,
-      this.driverId});
+      this.driverId,
+      this.companyId,
+      this.companyName});
 
   VehicleModel.fromJson(Map<String, dynamic> json) {
     vehicleId = json['id'] ?? 0;
@@ -53,5 +57,7 @@ class VehicleModel {
     airCondition = json['airCondition'] ?? false;
     color = json['color'] ?? '';
     driverId = json['userDriverId'] ?? 0;
+    companyId = json['companyId'] ?? 0;
+    companyName = json['companyName'] ?? "";
   }
 }
