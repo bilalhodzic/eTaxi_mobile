@@ -45,6 +45,13 @@ class OrderProvider extends ChangeNotifier {
   List<Order> orders = [];
   Order? selectedOrder;
 
+  Map<String, dynamic> vehicleFilters = {};
+
+  void setVehicleFilters(Map<String, dynamic> filters) {
+    vehicleFilters = filters;
+    notifyListeners();
+  }
+
   void setSelectedOrder(Order order) async {
     //this method is used when viewing order list and clicking on one of the orders
     //it sets all the data from that order to OrderProvider, so we can edit it if needed

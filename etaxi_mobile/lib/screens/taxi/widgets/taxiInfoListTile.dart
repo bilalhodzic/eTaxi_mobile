@@ -40,142 +40,160 @@ class TaxiInfoListTile extends StatelessWidget {
           ],
         ),
         child: FutureBuilder(
-            future: HomeService.getVehicles(),
+            future: HomeService.getVehicles(
+                queryParams:
+                    Provider.of<OrderProvider>(context).vehicleFilters),
             builder: ((context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done)
-                return ListView.builder(
-                    padding: EdgeInsets.only(top: 5),
-                    shrinkWrap: true,
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (context, index) {
-                      var vehicle = snapshot.data![index];
-                      return InkWell(
-                        onTap: () {
-                          OrderProvider.instance.setSelectedVehicle(vehicle);
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(4),
-                              border: vehicle.vehicleId ==
-                                      OrderProvider
-                                          .instance.selectedVehicle?.vehicleId
-                                  ? Border.all(color: primaryColor)
-                                  : null),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  width: 67,
-                                  child: Center(
-                                    child: CachedImage(
-                                      imgUrl: vehicle.photo!,
-                                      height: h * 50,
-                                      width: SizeConfig.screenWidth,
-                                      vehicleId: vehicle.vehicleId.toString(),
-                                    ),
-                                  ),
-                                ),
-                                sb(8),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        vehicle.vehicleName!,
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                      sh(5),
-                                      if (vehicle.companyName != '' &&
-                                          vehicle.companyName != null)
-                                        Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 6, vertical: 2),
-                                          decoration: BoxDecoration(
-                                              color: Colors.grey[200],
-                                              borderRadius:
-                                                  BorderRadius.circular(10)),
-                                          child: Text(
-                                            vehicle.companyName ?? '',
-                                          ),
-                                        )
-                                    ],
-                                  ),
-                                ),
-                                sb(12),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
+                return snapshot.data!.length > 0
+                    ? ListView.builder(
+                        padding: EdgeInsets.only(top: 5),
+                        shrinkWrap: true,
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (context, index) {
+                          var vehicle = snapshot.data![index];
+                          return InkWell(
+                            onTap: () {
+                              OrderProvider.instance
+                                  .setSelectedVehicle(vehicle);
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(4),
+                                  border: vehicle.vehicleId ==
+                                          OrderProvider.instance.selectedVehicle
+                                              ?.vehicleId
+                                      ? Border.all(color: primaryColor)
+                                      : null),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text(
-                                      '${vehicle.price} BAM/km',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w700,
-                                          color: primaryColor),
+                                    Container(
+                                      width: 67,
+                                      child: Center(
+                                        child: CachedImage(
+                                          imgUrl: vehicle.photo!,
+                                          height: h * 50,
+                                          width: SizeConfig.screenWidth,
+                                          vehicleId:
+                                              vehicle.vehicleId.toString(),
+                                        ),
+                                      ),
                                     ),
-                                    sh(5),
-                                    InkWell(
-                                        onTap: () async {
-                                          try {
-                                            if (AuthProvider
-                                                    .instance.user?.favorites
-                                                    ?.map((e) => e.companyId)
-                                                    .contains(
-                                                        vehicle.companyId ??
-                                                            0) ??
-                                                false) {
-                                              await UserServices
-                                                  .deleteFavoriteCompany(AuthProvider
-                                                          .instance
-                                                          .user!
-                                                          .favorites
-                                                          ?.firstWhere((element) =>
-                                                              element
-                                                                  .companyId ==
-                                                              vehicle.companyId)
-                                                          .id ??
-                                                      0);
-                                            } else {
-                                              await UserServices
-                                                  .addFavoriteCompany(vehicle);
-                                            }
-                                            var user =
-                                                await UserServices.getUser(
-                                                    AuthProvider
-                                                        .instance.user!.id!);
-                                            AuthProvider.instance.setUser(
-                                                Userinfo.fromJson(user));
-                                          } catch (e) {
-                                            appSnackBar(
-                                                context: context,
-                                                msg: e.toString(),
-                                                isError: true);
-                                          }
-                                        },
-                                        child: Icon(Provider.of<AuthProvider>(
-                                                        context)
-                                                    .user
-                                                    ?.favorites
-                                                    ?.map((e) => e.companyId)
-                                                    .contains(
-                                                        vehicle.companyId ??
-                                                            0) ??
-                                                false
-                                            ? Icons.favorite
-                                            : Icons.favorite_outline))
+                                    sb(8),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            vehicle.vehicleName!,
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                          sh(5),
+                                          if (vehicle.companyName != '' &&
+                                              vehicle.companyName != null)
+                                            Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 6, vertical: 2),
+                                              decoration: BoxDecoration(
+                                                  color: Colors.grey[200],
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
+                                              child: Text(
+                                                vehicle.companyName ?? '',
+                                              ),
+                                            )
+                                        ],
+                                      ),
+                                    ),
+                                    sb(12),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          '${vehicle.price} BAM/km',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w700,
+                                              color: primaryColor),
+                                        ),
+                                        sh(5),
+                                        InkWell(
+                                            onTap: () async {
+                                              try {
+                                                if (AuthProvider.instance.user
+                                                        ?.favorites
+                                                        ?.map(
+                                                            (e) => e.companyId)
+                                                        .contains(
+                                                            vehicle.companyId ??
+                                                                0) ??
+                                                    false) {
+                                                  await UserServices
+                                                      .deleteFavoriteCompany(AuthProvider
+                                                              .instance
+                                                              .user!
+                                                              .favorites
+                                                              ?.firstWhere((element) =>
+                                                                  element
+                                                                      .companyId ==
+                                                                  vehicle
+                                                                      .companyId)
+                                                              .id ??
+                                                          0);
+                                                } else {
+                                                  await UserServices
+                                                      .addFavoriteCompany(
+                                                          vehicle);
+                                                }
+                                                var user =
+                                                    await UserServices.getUser(
+                                                        AuthProvider.instance
+                                                            .user!.id!);
+                                                AuthProvider.instance.setUser(
+                                                    Userinfo.fromJson(user));
+                                              } catch (e) {
+                                                appSnackBar(
+                                                    context: context,
+                                                    msg: e.toString(),
+                                                    isError: true);
+                                              }
+                                            },
+                                            child: Icon(Provider.of<
+                                                                AuthProvider>(
+                                                            context)
+                                                        .user
+                                                        ?.favorites
+                                                        ?.map(
+                                                            (e) => e.companyId)
+                                                        .contains(
+                                                            vehicle.companyId ??
+                                                                0) ??
+                                                    false
+                                                ? Icons.favorite
+                                                : Icons.favorite_outline))
+                                      ],
+                                    )
                                   ],
-                                )
-                              ],
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                      );
-                    });
+                          );
+                        })
+                    : Center(
+                        child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text("Nema pronadjenih vozila"),
+                      ));
               else
                 return Center(child: CircularProgressIndicator());
             })),

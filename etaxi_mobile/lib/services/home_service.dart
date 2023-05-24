@@ -26,10 +26,12 @@ class HomeService {
     }
   }
 
-  static Future<List<VehicleModel>> getVehicles() async {
+  static Future<List<VehicleModel>> getVehicles(
+      {Map<String, dynamic>? queryParams = const {}}) async {
     List<VehicleModel> vehicles = [];
     try {
-      Response res = await ApiModels().getRequest(url: 'api/Vehicle');
+      Response res = await ApiModels()
+          .getRequest(url: 'api/Vehicle', queryParams: queryParams);
 
       if (res.statusCode == 200) {
         var data = json.decode(res.body);

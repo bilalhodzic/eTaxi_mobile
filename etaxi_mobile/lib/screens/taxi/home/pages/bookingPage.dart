@@ -6,6 +6,7 @@ import 'package:etaxi_mobile/providers/order_provider.dart';
 import 'package:etaxi_mobile/screens/commonPages/addCardPage.dart';
 import 'package:etaxi_mobile/screens/taxi/home/pages/taxiRideBookedPage.dart';
 import 'package:etaxi_mobile/screens/taxi/widgets/taxiInfoListTile.dart';
+import 'package:etaxi_mobile/screens/taxi/widgets/vehicleFilters.dart';
 import 'package:etaxi_mobile/services/order_services.dart';
 import 'package:etaxi_mobile/utils/colors.dart';
 import 'package:etaxi_mobile/utils/sizeConfig.dart';
@@ -19,11 +20,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
-class BookingPage extends StatelessWidget {
+class BookingPage extends StatefulWidget {
   BookingPage({Key? key}) : super(key: key);
 
-  TextEditingController _promoCodeController = TextEditingController();
+  @override
+  State<BookingPage> createState() => _BookingPageState();
+}
 
+class _BookingPageState extends State<BookingPage> {
+  TextEditingController _promoCodeController = TextEditingController();
+  bool isVehicleFilterOpen = false;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -149,12 +155,34 @@ class BookingPage extends StatelessWidget {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(left: 30),
-                      child: Text(
-                        "Izaberite svoj taxi",
-                        style: TextStyle(fontWeight: FontWeight.w500),
+                      padding: const EdgeInsets.symmetric(horizontal: 30),
+                      child: Row(
+                        children: [
+                          Text(
+                            "Izaberite svoj taxi",
+                            style: TextStyle(fontWeight: FontWeight.w500),
+                          ),
+                          Spacer(),
+                          Text("Filteri"),
+                          IconButton(
+                            onPressed: () {
+                              setState(() {
+                                isVehicleFilterOpen = !isVehicleFilterOpen;
+                              });
+                            },
+                            icon: Icon(Icons.filter_alt_outlined),
+                          )
+                        ],
                       ),
                     ),
+                    if (isVehicleFilterOpen)
+                      VehicleFilters(
+                        onSubmit: () {
+                          setState(() {
+                            isVehicleFilterOpen = false;
+                          });
+                        },
+                      ),
                     TaxiInfoListTile(),
                     Padding(
                       padding: const EdgeInsets.symmetric(
