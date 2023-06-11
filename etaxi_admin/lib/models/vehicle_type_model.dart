@@ -1,15 +1,15 @@
 class VehicleType {
-  int? vehicleTypeId;
+  int? id;
   String? name;
   int? seats;
-  String? icon;
+  String? imageUrl;
 
-  VehicleType({this.vehicleTypeId, this.name, this.seats, this.icon});
+  VehicleType({this.id, this.name, this.seats, this.imageUrl});
 
   VehicleType.fromJson(Map<String, dynamic> json) {
-    vehicleTypeId = json['VehicleTypeId'];
-    name = json['Type'];
-    seats = json['NumberOfSeats'];
-    icon = json['File'];
+    id = json['id'];
+    name = json['type'];
+    seats = json['numberOfSeats'];
+    imageUrl = json['imageUrl'];
   }
 }

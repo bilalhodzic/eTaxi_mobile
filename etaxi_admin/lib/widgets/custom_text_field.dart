@@ -42,7 +42,7 @@ class CustomTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    var b = SizeConfig.screenWidth / 375;
+    var b = SizeConfig.screenWidth / 720;
 
     const outlineInputBorder = OutlineInputBorder(
       borderSide: BorderSide(
