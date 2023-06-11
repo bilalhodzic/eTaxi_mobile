@@ -1,3 +1,4 @@
+import 'package:etaxi_admin/widgets/map_widget.dart';
 import 'package:flutter/material.dart';
 
 class OrdersPage extends StatelessWidget {
@@ -5,8 +6,15 @@ class OrdersPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Text('Orders page'),
-    );
+    return Column(children: [
+      Text('Orders page'),
+      Row(
+        children: [
+          IconButton(onPressed: () {}, icon: Icon(Icons.add)),
+          Text('Kreiraj novu narudzbu')
+        ],
+      ),
+      MapWidget()
+    ]);
   }
 }
