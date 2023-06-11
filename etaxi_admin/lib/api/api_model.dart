@@ -4,7 +4,7 @@ import 'dart:developer';
 import 'package:http/http.dart' as http;
 
 const googleApiKey = 'AIzaSyBllt8BR5FXxa6kmBRODoh08Rg__uQ3sCA';
-const localhost = 'localhost:7152';
+const localhost = '7c7d-188-127-110-53.ngrok-free.app'; //'localhost:7152';
 
 class ApiModels {
   String apiUrl = localhost;

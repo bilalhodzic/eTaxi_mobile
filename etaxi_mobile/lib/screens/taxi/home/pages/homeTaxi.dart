@@ -9,7 +9,6 @@ import 'package:etaxi_mobile/screens/taxi/home/pages/destinationPage.dart';
 import 'package:etaxi_mobile/screens/taxi/home/pages/taxiRideBookedPage.dart';
 import 'package:etaxi_mobile/screens/taxi/widgets/googleMapWidget.dart';
 import 'package:etaxi_mobile/services/directions_services.dart';
-import 'package:etaxi_mobile/widgets/searchBar.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';

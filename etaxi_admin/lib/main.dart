@@ -1,4 +1,5 @@
 import 'package:etaxi_admin/providers/auth_provider.dart';
+import 'package:etaxi_admin/providers/order_provider.dart';
 import 'package:etaxi_admin/screens/login.dart';
 import 'package:etaxi_admin/utils/colors.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AuthProvider.instance),
+        ChangeNotifierProvider(create: (context) => AuthProvider.instance),
+        ChangeNotifierProvider(create: (context) => OrderProvider.instance),
       ],
       child: MaterialApp(
         title: 'eTaxi Admin',
