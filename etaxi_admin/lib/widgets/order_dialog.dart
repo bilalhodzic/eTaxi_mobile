@@ -3,6 +3,7 @@ import 'package:etaxi_admin/providers/order_provider.dart';
 import 'package:etaxi_admin/services/main_service.dart';
 import 'package:etaxi_admin/widgets/custom_button.dart';
 import 'package:etaxi_admin/widgets/place_picker_widget.dart';
+import 'package:etaxi_admin/widgets/searchBar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

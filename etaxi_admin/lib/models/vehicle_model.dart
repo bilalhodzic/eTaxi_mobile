@@ -1,3 +1,5 @@
+import 'package:etaxi_admin/models/vehicle_type_model.dart';
+
 class VehicleModel {
   int? vehicleId;
   int? modelId;
@@ -18,6 +20,7 @@ class VehicleModel {
   int? driverId;
   int? companyId;
   String? companyName;
+  VehicleType? type;
 
   VehicleModel(
       {this.vehicleId,
@@ -38,7 +41,8 @@ class VehicleModel {
       this.color,
       this.driverId,
       this.companyId,
-      this.companyName});
+      this.companyName,
+      this.type});
 
   VehicleModel.fromJson(Map<String, dynamic> json) {
     vehicleId = json['id'] ?? 0;
@@ -57,7 +61,8 @@ class VehicleModel {
     airCondition = json['airCondition'] ?? false;
     color = json['color'] ?? '';
     driverId = json['userDriverId'] ?? 0;
-    companyId = json['companyId'] ?? 0;
+    companyId = json['companyId'] ?? null;
     companyName = json['companyName'] ?? "";
+    type = VehicleType.fromJson(json['type']);
   }
 }

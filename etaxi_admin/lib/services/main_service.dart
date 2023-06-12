@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:etaxi_admin/api/api_model.dart';
 import 'package:etaxi_admin/models/vehicle_model.dart';
@@ -16,6 +17,15 @@ class MainServices {
         vehicleTypesList.add(VehicleType.fromJson(item));
       }
       return vehicleTypesList;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  static Future<List<dynamic>> getCompanies() async {
+    try {
+      Response res = await ApiModels().getRequest(url: 'api/Company');
+      return jsonDecode(res.body);
     } catch (e) {
       throw e;
     }
@@ -41,18 +51,40 @@ class MainServices {
     return vehicles;
   }
 
-  Future addVehicle({required Map<String, Object> data}) async {
-    Response res =
-        await ApiModels().postRequest(url: 'api/Vehicle', data: data);
-    if (res.statusCode == 200) {
-      //var token = jsonDecode(res.body)['Token'];
-      //AuthProvider.instance.setToken(token);
-    } else {
-      //AuthProvider.instance.setError(jsonDecode(res.body)["title"], 'register');
-      print(res.body);
-    }
+  Future addVehicle({required Map data}) async {
+    try {
+      Response res =
+          await ApiModels().postRequest(url: 'api/Vehicle', data: data);
+      inspect(res);
+      if (res.statusCode == 200) {
+      } else {
+        print(res.body);
+        throw res.body;
+      }
 
-    return res;
+      return res;
+    } catch (e) {
+      print('hereee');
+      throw e;
+    }
+  }
+
+  Future editVehicle({required Map data, required int id}) async {
+    try {
+      Response res =
+          await ApiModels().putRequest(url: 'api/Vehicle/$id', data: data);
+      inspect(res);
+      if (res.statusCode == 200) {
+      } else {
+        print(res.body);
+        throw res.body;
+      }
+
+      return res;
+    } catch (e) {
+      print('hereee');
+      throw e;
+    }
   }
 //Add vehicle type
 

@@ -45,7 +45,7 @@ class VehiclesPage extends StatelessWidget {
         Text('Pregled svih vozila'),
         Expanded(
           child: Container(
-            width: 750,
+            width: 550,
             child: FutureBuilder(
               future: MainServices.getVehicles(),
               builder: ((context, snapshot) {
