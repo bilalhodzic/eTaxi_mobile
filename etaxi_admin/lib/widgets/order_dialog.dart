@@ -1,9 +1,10 @@
 import 'package:etaxi_admin/models/vehicle_model.dart';
 import 'package:etaxi_admin/providers/order_provider.dart';
 import 'package:etaxi_admin/services/main_service.dart';
+import 'package:etaxi_admin/services/order_service.dart';
 import 'package:etaxi_admin/widgets/custom_button.dart';
 import 'package:etaxi_admin/widgets/place_picker_widget.dart';
-import 'package:etaxi_admin/widgets/searchBar.dart';
+import 'package:etaxi_admin/widgets/searchBar.dart' as sb;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -24,7 +25,7 @@ class _OrderDialogState extends State<OrderDialog> {
       content: Column(
         children: [
           Consumer<OrderProvider>(
-            builder: (context, notifier, child) => SearchBar(
+            builder: (context, notifier, child) => sb.SearchBar(
                 hintText:
                     notifier.currentLocationData?.address ?? 'Pocetna lokacija',
                 onTap: () {
@@ -44,7 +45,7 @@ class _OrderDialogState extends State<OrderDialog> {
             height: 16,
           ),
           Consumer<OrderProvider>(
-            builder: (context, notifier, child) => SearchBar(
+            builder: (context, notifier, child) => sb.SearchBar(
                 hintText: notifier.destinationLocationData?.address ??
                     'Finalna lokacija',
                 onTap: () {
@@ -81,7 +82,11 @@ class _OrderDialogState extends State<OrderDialog> {
                       child: Text(item.vehicleName ?? 'Yugo 55'),
                     );
                   }).toList(),
-                  onChanged: (String? newValue) {},
+                  onChanged: (newValue) {
+                    OrderProvider.instance.setSelectedVehicle(snapshot.data!
+                        .firstWhere((element) =>
+                            element.vehicleId.toString() == newValue));
+                  },
                 );
               }
             },
@@ -116,7 +121,8 @@ class _OrderDialogState extends State<OrderDialog> {
           Spacer(),
           CustomButton(
             label: 'Naruci voznju',
-            onPressed: () {
+            onPressed: () async {
+              await OrderService.createOrder();
               Navigator.pop(context);
             },
           )

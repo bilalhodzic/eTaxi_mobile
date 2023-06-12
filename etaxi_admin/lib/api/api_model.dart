@@ -1,9 +1,10 @@
 import 'dart:convert';
 
+import 'package:etaxi_admin/providers/auth_provider.dart';
 import 'package:http/http.dart' as http;
 
 const googleApiKey = 'AIzaSyBllt8BR5FXxa6kmBRODoh08Rg__uQ3sCA';
-const localhost = 'localhost:7152';
+const localhost = 'e0b7-188-127-110-53.ngrok-free.app'; //'localhost:7152';
 
 class ApiModels {
   String apiUrl = localhost;
@@ -48,6 +49,7 @@ class ApiModels {
       {required String url, Map<String, dynamic>? queryParams}) async {
     final uri = Uri.https(apiUrl, url, queryParams);
     print(uri);
+
     final response = await http.get(
       uri,
       headers: <String, String>{

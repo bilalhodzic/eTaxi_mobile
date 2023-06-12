@@ -1,13 +1,8 @@
-
-
 import 'package:etaxi_admin/models/order_model.dart';
 import 'package:etaxi_admin/models/vehicle_model.dart';
 import 'package:flutter/widgets.dart';
 
 import '../models/location_model.dart';
-
-
-
 
 enum PaymentMethod { CASH, ONLINE }
 
@@ -28,13 +23,10 @@ class OrderProvider extends ChangeNotifier {
   Location? currentLocationData;
   Location? destinationLocationData;
 
-
   DateTime? startTime;
   VehicleModel? selectedVehicle;
   double? orderPrice;
   PaymentMethod paymentMethod = PaymentMethod.CASH;
-
-
 
   bool isEditOrder = false;
   int? orderId;
@@ -48,7 +40,6 @@ class OrderProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-
   void setOrderId(int? id) {
     orderId = id;
     notifyListeners();
@@ -56,7 +47,7 @@ class OrderProvider extends ChangeNotifier {
 
   void setIsEditOrder(bool value) {
     isEditOrder = value;
-  
+
     notifyListeners();
   }
 
@@ -70,48 +61,43 @@ class OrderProvider extends ChangeNotifier {
     notifyListeners();
   }
 
- 
-
   void setPaymentMethod(PaymentMethod method) {
     paymentMethod = method;
     notifyListeners();
   }
 
- 
- 
-
   Future setCurrentLoc(Location loc) async {
     currentLocationData = loc;
-   
+
+    notifyListeners();
+  }
+
+  Future setSelectedVehicle(VehicleModel veh) async {
+    selectedVehicle = veh;
+
     notifyListeners();
   }
 
   Future setDestinationLoc(Location loc) async {
     destinationLocationData = loc;
-   
 
     notifyListeners();
   }
 
-
-
   void resetToInit([bool shouldNotify = false]) {
-
-
     destinationLocationData = null;
     currentLocationData = null;
-   
+
     paymentMethod = PaymentMethod.CASH;
     selectedVehicle = null;
     orderPrice = null;
     DateTime? startTime = null;
     isEditOrder = false;
-   
+
     orderId = null;
 
     if (shouldNotify) notifyListeners();
   }
 
   //Taxi order part END
-
 }
