@@ -1,17 +1,15 @@
-import 'dart:developer';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:etaxi_admin/models/vehicle_model.dart';
+import 'package:etaxi_admin/services/main_service.dart';
 import 'package:etaxi_admin/utils/colors.dart';
 import 'package:etaxi_admin/utils/sizeConfig.dart';
-import 'package:etaxi_admin/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 
 class VehicleBox extends StatelessWidget {
-  const VehicleBox({Key? key, required this.vehicle, this.fun})
-      : super(key: key);
+  VehicleBox({Key? key, required this.vehicle, this.fun}) : super(key: key);
 
   final VehicleModel vehicle;
+  final MainServices services = MainServices();
   final Function()? fun;
 
   @override
@@ -84,8 +82,18 @@ class VehicleBox extends StatelessWidget {
                       fontWeight: FontWeight.w700, color: primaryColor),
                 ),
                 sh(5),
+                GestureDetector(
+                  onTap: () {
+                    // Perform delete operation
+                    services.deleteVehicle(id: vehicle.vehicleId!);
+                  },
+                  child: IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: null,
+                  ),
+                ),
               ],
-            )
+            ),
           ],
         ),
       ),

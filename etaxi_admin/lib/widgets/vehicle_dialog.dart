@@ -1,13 +1,17 @@
-import 'dart:developer';
+import 'dart:io';
 
 import 'package:etaxi_admin/models/vehicle_type_model.dart';
 import 'package:etaxi_admin/services/main_service.dart';
-import 'package:etaxi_admin/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 
-class VehicleDialog extends StatelessWidget {
-  VehicleDialog({super.key});
+class VehicleDialog extends StatefulWidget {
+  VehicleDialog({Key? key}) : super(key: key);
 
+  @override
+  _VehicleDialogState createState() => _VehicleDialogState();
+}
+
+class _VehicleDialogState extends State<VehicleDialog> {
   TextEditingController name = TextEditingController();
   TextEditingController licenceNumber = TextEditingController();
   TextEditingController kmTraveled = TextEditingController();
@@ -18,15 +22,19 @@ class VehicleDialog extends StatelessWidget {
   TextEditingController pricePerKm = TextEditingController();
   bool airBag = false;
   bool airCondition = false;
-
-  //TextEditingController imageUrl = TextEditingController();
+  int? selectedVehicleType;
+  String? selectedFuelType;
+  String? selectedTransmission;
+  MainServices mainServices = MainServices();
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-        title: Text('Dodaj novo vozilo'),
-        content: SingleChildScrollView(
-          child: Column(mainAxisSize: MainAxisSize.min, children: [
+      title: Text('Dodaj novo vozilo'),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
             TextField(
               decoration: InputDecoration(
                 labelText: 'Naziv',
@@ -61,18 +69,23 @@ class VehicleDialog extends StatelessWidget {
             CheckboxListTile(
               value: airBag,
               onChanged: (value) {
-                airBag = value!;
+                setState(() {
+                  airBag = value!;
+                });
               },
               title: Text('AirBag'),
             ),
             CheckboxListTile(
               value: airCondition,
               onChanged: (value) {
-                airCondition = value!;
+                setState(() {
+                  airCondition = value!;
+                });
               },
               title: Text('Klima'),
             ),
-            DropdownButtonFormField(
+            DropdownButtonFormField<String>(
+              value: selectedFuelType,
               items: [
                 DropdownMenuItem(
                   child: Text('Dizel'),
@@ -95,6 +108,9 @@ class VehicleDialog extends StatelessWidget {
                 labelText: 'Tip goriva',
               ),
               onChanged: (value) {
+                setState(() {
+                  selectedFuelType = value!;
+                });
                 print(value);
               },
             ),
@@ -112,30 +128,46 @@ class VehicleDialog extends StatelessWidget {
               keyboardType: TextInputType.number,
               controller: kmTraveled,
             ),
+            TextField(
+              decoration: InputDecoration(
+                labelText: 'Broj registracije',
+              ),
+              keyboardType: TextInputType.number,
+              controller: licenceNumber,
+            ),
             FutureBuilder<List<VehicleType>>(
-                future: MainServices.getVehicleTypes(),
-                builder: ((context, snapshot) {
-                  if (snapshot.hasError) {
-                    print(snapshot.error);
-                  }
-                  if (snapshot.hasData) {
-                    return DropdownButtonFormField(
-                        items: snapshot.data!
-                            .map((VehicleType item) => DropdownMenuItem(
-                                  child: Text(item.name!),
-                                  value: item.id,
-                                ))
-                            .toList(),
-                        decoration: InputDecoration(
-                          labelText: 'Tip vozila',
-                        ),
-                        onChanged: (value) {
-                          print(value);
-                        });
-                  }
-                  return CircularProgressIndicator();
-                })),
-            DropdownButtonFormField(
+              future: MainServices.getVehicleTypes(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  print(snapshot.error);
+                }
+                if (snapshot.hasData) {
+                  return DropdownButtonFormField<int>(
+                    value: selectedVehicleType,
+                    items: snapshot.data!
+                        .map(
+                          (VehicleType item) => DropdownMenuItem<int>(
+                            child: Text(item.name!),
+                            value: item.id,
+                          ),
+                        )
+                        .toList(),
+                    decoration: InputDecoration(
+                      labelText: 'Tip vozila',
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        selectedVehicleType = value!;
+                      });
+                      print(value);
+                    },
+                  );
+                }
+                return CircularProgressIndicator();
+              },
+            ),
+            DropdownButtonFormField<String>(
+              value: selectedTransmission,
               items: [
                 DropdownMenuItem(
                   child: Text('Manual'),
@@ -150,22 +182,49 @@ class VehicleDialog extends StatelessWidget {
                 labelText: 'Transmisija',
               ),
               onChanged: (value) {
+                setState(() {
+                  selectedTransmission = value!;
+                });
                 print(value);
               },
             ),
-          ]),
+          ],
         ),
-        actions: [
-          TextButton(
-              onPressed: () {
-                Navigator.pop(context);
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text('Odustani'),
+        ),
+        TextButton(
+          onPressed: () {
+            //Send data to server
+            mainServices.addVehicle(
+              data: {
+                "name": name.text,
+                "kmTraveled": kmTraveled.text,
+                "licenceNumber": licenceNumber.text,
+                "year": year.text,
+                "airCondition": airCondition,
+                "airBag": airBag,
+                "fuelType": selectedFuelType!,
+                "transmission": selectedTransmission!,
+                "currentLocationId": 1,
+                "color": color.text,
+                "brand": brand.text,
+                "pricePerKm": pricePerKm.text,
+                "userDriverId": 1,
+                "typeId": selectedVehicleType!,
+                "imageUrl": imageUrl.text,
               },
-              child: Text('Odustani')),
-          TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('Dodaj'))
-        ]);
+            );
+            Navigator.pop(context);
+          },
+          child: Text('Dodaj'),
+        ),
+      ],
+    );
   }
 }

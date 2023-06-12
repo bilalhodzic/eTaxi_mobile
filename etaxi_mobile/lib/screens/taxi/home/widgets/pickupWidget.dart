@@ -3,7 +3,6 @@ import 'package:etaxi_mobile/models/location_model.dart';
 import 'package:etaxi_mobile/providers/order_provider.dart';
 import 'package:etaxi_mobile/services/directions_services.dart';
 import 'package:etaxi_mobile/utils/sizeConfig.dart';
-import 'package:etaxi_mobile/widgets/searchBar.dart';
 import 'package:flutter/material.dart';
 import 'package:place_picker/entities/location_result.dart';
 import 'package:place_picker/place_picker.dart';

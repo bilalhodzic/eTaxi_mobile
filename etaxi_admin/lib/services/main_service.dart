@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:etaxi_admin/api/api_model.dart';
 import 'package:etaxi_admin/models/vehicle_model.dart';
@@ -40,5 +39,46 @@ class MainServices {
       print('Error in getSelfDrivingVehicles: $e');
     }
     return vehicles;
+  }
+
+  Future addVehicle({required Map<String, Object> data}) async {
+    Response res =
+        await ApiModels().postRequest(url: 'api/Vehicle', data: data);
+    if (res.statusCode == 200) {
+      //var token = jsonDecode(res.body)['Token'];
+      //AuthProvider.instance.setToken(token);
+    } else {
+      //AuthProvider.instance.setError(jsonDecode(res.body)["title"], 'register');
+      print(res.body);
+    }
+
+    return res;
+  }
+//Add vehicle type
+
+  Future addVehicleType({required Map<String, Object> data}) async {
+    Response res =
+        await ApiModels().postRequest(url: 'api/VehicleType', data: data);
+    if (res.statusCode == 200) {
+      // var token = jsonDecode(res.body)['Token'];
+      //AuthProvider.instance.setToken(token);
+    } else {
+      //AuthProvider.instance.setError(jsonDecode(res.body)["title"], 'register');
+      print(res.body);
+    }
+
+    return res;
+  }
+
+  Future deleteVehicle({required int id}) async {
+    Response res = await ApiModels().deleteRequest(url: 'api/Vehicle/$id');
+    if (res.statusCode == 200) {
+      //var token = jsonDecode(res.body)['Token'];
+      //AuthProvider.instance.setToken(token);
+    } else {
+      //AuthProvider.instance.setError(jsonDecode(res.body)["title"], 'register');
+      print(res.body);
+    }
+    return res;
   }
 }

@@ -6,7 +6,6 @@ import 'package:etaxi_admin/models/user_model.dart';
 import 'package:etaxi_admin/models/vehicle_model.dart';
 import 'package:etaxi_admin/providers/auth_provider.dart';
 import 'package:http/http.dart';
-import 'package:jwt_decode/jwt_decode.dart';
 
 class UserServices {
   static Future loginService(data) async {

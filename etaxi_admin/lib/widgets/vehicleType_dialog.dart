@@ -1,3 +1,4 @@
+import 'package:etaxi_admin/services/main_service.dart';
 import 'package:flutter/material.dart';
 
 class VehicleTypeDialog extends StatelessWidget {
@@ -6,6 +7,7 @@ class VehicleTypeDialog extends StatelessWidget {
   TextEditingController type = TextEditingController();
   TextEditingController numberOfSeats = TextEditingController();
   TextEditingController imageUrl = TextEditingController();
+  MainServices mainServices = MainServices();
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +44,13 @@ class VehicleTypeDialog extends StatelessWidget {
               child: Text('Odustani')),
           TextButton(
               onPressed: () {
+                mainServices.addVehicleType(
+                  data: {
+                    'type': type.text,
+                    'numberOfSeats': numberOfSeats.text,
+                    'imageUrl': imageUrl.text,
+                  },
+                );
                 Navigator.pop(context);
               },
               child: Text('Dodaj'))

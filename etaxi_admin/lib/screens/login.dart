@@ -2,7 +2,6 @@ import 'dart:developer';
 import 'package:etaxi_admin/providers/auth_provider.dart';
 import 'package:etaxi_admin/screens/layout_page.dart';
 import 'package:etaxi_admin/services/user_service.dart';
-import 'package:etaxi_admin/utils/colors.dart';
 import 'package:etaxi_admin/utils/sizeConfig.dart';
 import 'package:etaxi_admin/widgets/custom_button.dart';
 import 'package:etaxi_admin/widgets/custom_text_field.dart';
@@ -134,6 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             });
                             return null;
                           }
+                          return null;
                         },
                       ),
                       sh(20),
