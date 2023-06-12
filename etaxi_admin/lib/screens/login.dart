@@ -73,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
         padding: EdgeInsets.symmetric(horizontal: 30, vertical: 16),
         child: Center(
           child: SizedBox(
-            width: SizeConfig.screenWidth / 2.5,
+            width: MediaQuery.of(context).size.width / 2.5,
             child: Column(children: [
               sh(30),
               Image.asset(

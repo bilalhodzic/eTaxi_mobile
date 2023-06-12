@@ -1,6 +1,9 @@
+import 'package:etaxi_admin/models/vehicle_model.dart';
+import 'package:etaxi_admin/services/main_service.dart';
 import 'package:etaxi_admin/utils/sizeConfig.dart';
 import 'package:etaxi_admin/widgets/vehicleType_dialog.dart';
 import 'package:etaxi_admin/widgets/vehicle_dialog.dart';
+import 'package:etaxi_admin/widgets/vehicle_viewBox.dart';
 import 'package:flutter/material.dart';
 
 class VehiclesPage extends StatelessWidget {
@@ -33,7 +36,29 @@ class VehiclesPage extends StatelessWidget {
         ],
       ),
       sh(20),
-      Text('Pregled svih vozila')
+      Text('Pregled svih vozila'),
+      Container(
+        width: 300,
+        child: FutureBuilder(
+            future: MainServices.getVehicles(),
+            builder: ((context, snapshot) {
+              if (snapshot.hasError) {
+                print(snapshot.error);
+              }
+              if (snapshot.hasData) {
+                return ListView.builder(
+                    padding: EdgeInsets.only(top: 5),
+                    shrinkWrap: true,
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (context, int) {
+                      return VehicleBox(
+                        vehicle: snapshot.data![int],
+                      );
+                    });
+              }
+              return CircularProgressIndicator();
+            })),
+      ),
     ]);
   }
 }

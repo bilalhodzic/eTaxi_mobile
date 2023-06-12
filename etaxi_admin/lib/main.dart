@@ -1,4 +1,5 @@
 import 'package:etaxi_admin/providers/auth_provider.dart';
+import 'package:etaxi_admin/providers/main_provider.dart';
 import 'package:etaxi_admin/providers/order_provider.dart';
 import 'package:etaxi_admin/screens/login.dart';
 import 'package:etaxi_admin/utils/colors.dart';
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => AuthProvider.instance),
         ChangeNotifierProvider(create: (context) => OrderProvider.instance),
+        ChangeNotifierProvider(create: (context) => MainProvider.instance),
       ],
       child: MaterialApp(
         title: 'eTaxi Admin',
