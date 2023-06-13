@@ -36,7 +36,7 @@ class Order {
       id: json["id"],
       isActive: json["isActive"],
       userDriverId: json["userDriverId"],
-      userId: json["userId"],
+      userId: json["userId"] ?? null,
       startLocation: Location.fromJson(json["startLocation"]),
       endLocation: Location.fromJson(json["endLocation"]),
       vehicle: VehicleModel.fromJson(json["vehicle"]),
@@ -45,5 +45,5 @@ class Order {
       startTime: DateTime.parse(json["startTime"]),
       paymentMethod: json["paymentMethod"],
       isCanceled: json["isCanceled"],
-      user: Userinfo.fromJson(json["user"]));
+      user: json["user"] != null ? Userinfo.fromJson(json["user"]) : null);
 }

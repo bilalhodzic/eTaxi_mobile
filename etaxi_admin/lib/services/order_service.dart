@@ -8,10 +8,12 @@ import 'package:etaxi_admin/providers/order_provider.dart';
 import 'package:http/http.dart';
 
 class OrderService {
-  static Future<List<Order>> getAllOrders() async {
+  static Future<List<Order>> getAllOrders(
+      {Map<String, dynamic>? queryParams}) async {
     List<Order> orders = [];
     try {
-      Response res = await ApiModels().getRequest(url: 'api/Order');
+      Response res = await ApiModels()
+          .getRequest(url: 'api/Order', queryParams: queryParams);
 
       var data = jsonDecode(res.body);
 
@@ -58,14 +60,14 @@ class OrderService {
 
     var dataToSend = {
       "userDriverId": vehicle.driverId,
-      "userId": AuthProvider.instance.user!.id,
+      "userId": null,
       "startLocationId": startLocationId,
       "endLocationId": endLocationId,
       "vehicleId": vehicle.vehicleId,
       "isSelfDrive": isSelfDrive,
       "startTime": OrderProvider.instance.startTime?.toIso8601String() ??
           DateTime.now().toIso8601String(),
-      "price": OrderProvider.instance.orderPrice ?? 20,
+      "price": OrderProvider.instance.orderPrice,
       "paymentMethod":
           OrderProvider.instance.paymentMethod == PaymentMethod.CASH
               ? "Gotovina"
@@ -73,9 +75,6 @@ class OrderService {
     };
 
     try {
-      // if (OrderProvider.instance.paymentMethod == PaymentMethod.ONLINE) {
-      //   await createStripePayment();
-      // }
       Response res =
           await ApiModels().postRequest(url: 'api/Order', data: dataToSend);
       inspect(res);

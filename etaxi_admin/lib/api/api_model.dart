@@ -4,7 +4,7 @@ import 'package:etaxi_admin/providers/auth_provider.dart';
 import 'package:http/http.dart' as http;
 
 const googleApiKey = 'AIzaSyBllt8BR5FXxa6kmBRODoh08Rg__uQ3sCA';
-const localhost = 'e0b7-188-127-110-53.ngrok-free.app'; //'localhost:7152';
+const localhost = 'localhost:7152';
 
 class ApiModels {
   String apiUrl = localhost;

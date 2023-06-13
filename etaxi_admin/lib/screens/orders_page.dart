@@ -1,18 +1,26 @@
 import 'package:etaxi_admin/models/order_model.dart';
+import 'package:etaxi_admin/providers/order_provider.dart';
 import 'package:etaxi_admin/services/order_service.dart';
 import 'package:etaxi_admin/utils/sizeConfig.dart';
 import 'package:etaxi_admin/widgets/my_trip_card.dart';
+import 'package:etaxi_admin/widgets/orderFilters.dart';
 import 'package:etaxi_admin/widgets/order_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class OrdersPage extends StatelessWidget {
+class OrdersPage extends StatefulWidget {
   const OrdersPage({super.key});
 
+  @override
+  State<OrdersPage> createState() => _OrdersPageState();
+}
+
+class _OrdersPageState extends State<OrdersPage> {
+  bool orderFiltersOpened = false;
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text('Orders page'),
         sh(16),
         Row(
           children: [
@@ -26,23 +34,49 @@ class OrdersPage extends StatelessWidget {
           ],
         ),
         sh(16),
-        SizedBox(
-          width: SizeConfig.screenWidth * 0.7,
-          child: FutureBuilder<List<Order>>(
-              future: OrderService.getAllOrders(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData)
-                  return Wrap(
-                    children: List.generate(snapshot.data!.length,
-                        (index) => MyTripCard(order: snapshot.data![index])),
-                    clipBehavior: Clip.hardEdge,
-                  );
-
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              }),
+        Text("Pregled Narudzbi"),
+        Row(
+          children: [
+            Text("Filteri"),
+            IconButton(
+                onPressed: () {
+                  setState(() {
+                    orderFiltersOpened = !orderFiltersOpened;
+                  });
+                },
+                icon: Icon(Icons.filter_alt))
+          ],
         ),
+        if (orderFiltersOpened) OrderFilters(),
+        sh(16),
+        Consumer<OrderProvider>(
+          builder: (context, orderProvider, child) => SizedBox(
+            width: SizeConfig.screenWidth * 0.7,
+            child: FutureBuilder<List<Order>>(
+                future: OrderService.getAllOrders(
+                    queryParams: orderProvider.orderFilters),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData)
+                    return snapshot.data!.length == 0
+                        ? Center(
+                            child: Text(
+                            "Nema pronadjenih narudžbi",
+                            style: TextStyle(fontSize: 25),
+                          ))
+                        : Wrap(
+                            children: List.generate(
+                                snapshot.data!.length,
+                                (index) =>
+                                    MyTripCard(order: snapshot.data![index])),
+                            clipBehavior: Clip.hardEdge,
+                          );
+
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }),
+          ),
+        )
       ]),
     );
   }

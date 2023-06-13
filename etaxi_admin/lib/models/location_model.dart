@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:location_picker_flutter_map/location_picker_flutter_map.dart';
 
 class Location {
@@ -38,7 +40,7 @@ class Location {
     address = json['address'] ?? '';
   }
 
-  factory Location.fromPickedData(PickedData data){
+  factory Location.fromPickedData(PickedData data) {
     return Location(
       latitude: data.latLong.latitude,
       longitude: data.latLong.longitude,
@@ -48,7 +50,6 @@ class Location {
       postalCode: data.addressData['postcode'],
       streetName: data.addressData['road'],
       streetNumber: data.addressData['house_number'],
-  
     );
   }
 }

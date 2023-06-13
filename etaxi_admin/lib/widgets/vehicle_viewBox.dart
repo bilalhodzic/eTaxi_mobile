@@ -8,9 +8,12 @@ import 'package:etaxi_admin/widgets/vehicle_dialog.dart';
 import 'package:flutter/material.dart';
 
 class VehicleBox extends StatefulWidget {
-  VehicleBox({Key? key, required this.vehicle, this.fun}) : super(key: key);
+  VehicleBox(
+      {Key? key, required this.vehicle, this.fun, this.noActions = false})
+      : super(key: key);
 
   final VehicleModel vehicle;
+  bool noActions;
   final Function()? fun;
 
   @override
@@ -109,53 +112,54 @@ class _VehicleBoxState extends State<VehicleBox> {
                           fontWeight: FontWeight.w700, color: primaryColor),
                     ),
                     sh(5),
-                    Row(
-                      children: [
-                        IconButton(
-                          icon: Icon(Icons.edit),
-                          // color: Colors.red,
-                          onPressed: () {
-                            showDialog(
-                                context: context,
-                                builder: (context) => VehicleDialog(
-                                      isEdit: true,
-                                      vehicle: widget.vehicle,
-                                    ));
-                          },
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.delete),
-                          color: Colors.red,
-                          onPressed: () {
-                            showDialog(
-                                context: context,
-                                builder: ((context) {
-                                  return AlertDialog(
-                                    title: Text('Obrisi vozilo'),
-                                    content: Text(
-                                        'Da li ste sigurni da zelite obrisati ovo vozilo?'),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text('Cancel'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                          services.deleteVehicle(
-                                              id: widget.vehicle.vehicleId!);
-                                        },
-                                        child: Text('Delete'),
-                                      ),
-                                    ],
-                                  );
-                                }));
-                          },
-                        ),
-                      ],
-                    ),
+                    if (!widget.noActions)
+                      Row(
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.edit),
+                            // color: Colors.red,
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) => VehicleDialog(
+                                        isEdit: true,
+                                        vehicle: widget.vehicle,
+                                      ));
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.delete),
+                            color: Colors.red,
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  builder: ((context) {
+                                    return AlertDialog(
+                                      title: Text('Obrisi vozilo'),
+                                      content: Text(
+                                          'Da li ste sigurni da zelite obrisati ovo vozilo?'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text('Cancel'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                            services.deleteVehicle(
+                                                id: widget.vehicle.vehicleId!);
+                                          },
+                                          child: Text('Delete'),
+                                        ),
+                                      ],
+                                    );
+                                  }));
+                            },
+                          ),
+                        ],
+                      ),
                   ],
                 ),
               ],
