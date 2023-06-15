@@ -53,7 +53,7 @@ class VehicleFilters extends StatelessWidget {
                     filters['companyName'] = companyController.text;
 
                   OrderProvider.instance.setVehicleFilters(filters);
-                  if (onSubmit != null) onSubmit;
+                  //if (onSubmit != null) onSubmit;
                 })
           ],
         ));

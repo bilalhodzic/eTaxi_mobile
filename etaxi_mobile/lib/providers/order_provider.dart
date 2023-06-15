@@ -126,8 +126,9 @@ class OrderProvider extends ChangeNotifier {
           1;
       total = distanceNumber * selectedVehicle!.price!;
     }
-    setOrderPrice(total, notify: false);
-    return total.toStringAsFixed(2) + " BAM";
+    double roundedTotal = double.parse(total.toStringAsFixed(2));
+    setOrderPrice(roundedTotal, notify: false);
+    return roundedTotal.toString() + " BAM";
   }
 
   void setBookingStage(BookingStage stage) {
@@ -173,6 +174,7 @@ class OrderProvider extends ChangeNotifier {
     isEditOrder = false;
     creditCardModel = null;
     orderId = null;
+    selectedOrder = null;
 
     if (shouldNotify) notifyListeners();
   }

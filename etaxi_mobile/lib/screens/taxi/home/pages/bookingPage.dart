@@ -184,19 +184,19 @@ class _BookingPageState extends State<BookingPage> {
                         },
                       ),
                     TaxiInfoListTile(),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 5),
-                      child: CustomTextField(
-                        label: 'Promo kod',
-                        controller: _promoCodeController,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: CustomButton(
-                          label: 'Primijeni promo kod', onPressed: () {}),
-                    ),
+                    // Padding(
+                    //   padding: const EdgeInsets.symmetric(
+                    //       horizontal: 16, vertical: 5),
+                    //   child: CustomTextField(
+                    //     label: 'Promo kod',
+                    //     controller: _promoCodeController,
+                    //   ),
+                    // ),
+                    // Padding(
+                    //   padding: const EdgeInsets.symmetric(horizontal: 16),
+                    //   child: CustomButton(
+                    //       label: 'Primijeni promo kod', onPressed: () {}),
+                    // ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(16, 15, 16, 0),
                       child: Text(

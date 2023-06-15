@@ -315,7 +315,7 @@ String generateOrderStatus(Order order) {
     return 'Otkazana';
   }
   if (order.isActive != true) {
-    return "Neaktivna";
+    return "Zavrsena";
   } else
     return 'Aktivna';
 }

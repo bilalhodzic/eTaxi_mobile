@@ -37,8 +37,8 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  setToken(token) {
-    token = token;
+  setToken(userToken) {
+    token = userToken;
     notifyListeners();
   }
 

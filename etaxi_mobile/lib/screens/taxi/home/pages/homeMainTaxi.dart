@@ -71,10 +71,7 @@ class _HomeMainTaxiState extends State<HomeMainTaxi> {
           },
         ),
       ),
-      body: IndexedStack(
-        children: _screens,
-        index: _index,
-      ),
+      body: _screens[_index],
     );
   }
 }

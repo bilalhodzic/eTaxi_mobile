@@ -2,6 +2,7 @@ import 'package:etaxi_mobile/providers/order_provider.dart';
 import 'package:etaxi_mobile/screens/self%20drive/bottomNavSelfDrive.dart';
 import 'package:etaxi_mobile/screens/taxi/home/pages/homeMainTaxi.dart';
 import 'package:etaxi_mobile/utils/sizeConfig.dart';
+import 'package:etaxi_mobile/widgets/app_snack_bar.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/colors.dart';
@@ -56,6 +57,10 @@ class _ModeSelectorScreenState extends State<ModeSelectorScreen> {
                 highlightColor: Colors.transparent,
                 splashColor: Colors.transparent,
                 onTap: () {
+                  return appSnackBar(
+                      context: context,
+                      msg: "Ovaj dio nije uradjen",
+                      isError: true);
                   setState(() {
                     isSelf = true;
                     isTaxi = false;

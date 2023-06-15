@@ -29,6 +29,6 @@ String timeFormat(TimeOfDay _selectedTime) {
 
 String formatFileUrl(String url) {
   var withoutPath = url.substring(url.indexOf("Resources") - 1);
-  var path = 'https://' + ApiModels().apiUrl + withoutPath;
+  var path = 'http://' + ApiModels().apiUrl + withoutPath;
   return path;
 }

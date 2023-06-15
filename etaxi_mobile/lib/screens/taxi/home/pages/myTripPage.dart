@@ -21,7 +21,7 @@ class MyTripPage extends StatefulWidget {
 class _MyTripPageState extends State<MyTripPage> {
   List<String> types = [
     'Sve',
-    'Neaktivne',
+    'Zavrsene',
     'Aktivne',
     'Otkazane',
   ];
@@ -35,7 +35,7 @@ class _MyTripPageState extends State<MyTripPage> {
       return "assets/icons/pending.svg";
     else if (title == 'Aktivne')
       return "assets/icons/confirmed.svg";
-    else if (title == 'CompletedLabel')
+    else if (title == 'Zavrsene')
       return "assets/icons/completed.svg";
     else if (title == 'Otkazane')
       return "assets/icons/cancelled.svg";
@@ -44,9 +44,13 @@ class _MyTripPageState extends State<MyTripPage> {
   }
 
   void setOrderFilter(String filter) {
-    if (filter == 'Neaktivne')
+    if (filter == 'Zavrsene')
       setState(() {
-        orderFilter = {...defaultFilter, "IsActive": "false"};
+        orderFilter = {
+          ...defaultFilter,
+          "IsActive": "false",
+          "IsCanceled": "false"
+        };
       });
     else if (filter == 'Aktivne')
       setState(() {

@@ -18,6 +18,7 @@ class UserServices {
       var token = decoded['token'];
       AuthProvider.instance.setToken(token);
       var userDecoded = await getUser(decoded['id']);
+      inspect(userDecoded);
       AuthProvider.instance.setUser(Userinfo.fromJson(userDecoded));
     } else {
       throw jsonDecode(res.body)["title"];
@@ -61,6 +62,17 @@ class UserServices {
     try {
       Response res = await ApiModels().getRequest(url: 'api/User/$id');
       return jsonDecode(res.body);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  static Future updateUser(data) async {
+    try {
+      Response res = await ApiModels().putRequest(url: 'api/User', data: data);
+      inspect(res);
+      if (res.statusCode != 200 && res.statusCode != 204)
+        throw jsonDecode(res.body)['title'];
     } catch (e) {
       throw e;
     }

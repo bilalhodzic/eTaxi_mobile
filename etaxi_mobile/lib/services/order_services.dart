@@ -151,6 +151,20 @@ class OrderServices {
     }
   }
 
+  static Future cancelOrder(data) async {
+    try {
+      Response res = await ApiModels()
+          .putRequest(url: 'api/Order/setOrderStatus', data: data);
+      inspect(res);
+      if (res.statusCode == 200) {
+        return jsonDecode(res.body);
+      }
+    } catch (e) {
+      print(e);
+      throw e;
+    }
+  }
+
   static Future addStripeCustomer() async {
     var addCustomerData = {
       "email": AuthProvider.instance.user!.email,

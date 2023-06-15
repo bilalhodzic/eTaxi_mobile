@@ -7,7 +7,9 @@ import 'package:etaxi_mobile/providers/auth_provider.dart';
 import 'package:etaxi_mobile/services/user_services.dart';
 import 'package:etaxi_mobile/utils/sizeConfig.dart';
 import 'package:etaxi_mobile/utils/utilFunctions.dart';
+import 'package:etaxi_mobile/widgets/app_snack_bar.dart';
 import 'package:etaxi_mobile/widgets/custom_button.dart';
+import 'package:etaxi_mobile/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -22,7 +24,7 @@ class _ProfilePageState extends State<ProfilePage> {
   List<String> _imagePaths = [];
   TextEditingController _nameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
-  TextEditingController _addressController = TextEditingController();
+  TextEditingController _surnameController = TextEditingController();
   TextEditingController _phoneController = TextEditingController();
 
   @override
@@ -36,7 +38,12 @@ class _ProfilePageState extends State<ProfilePage> {
     var userDecoded =
         await UserServices.getUser(AuthProvider.instance.user!.id!);
     var user = Userinfo.fromJson(userDecoded);
-    //AuthProvider.instance.setUser(Userinfo.fromJson(userDecoded));
+    //add user data to text controllers
+    _nameController.text = user.firstName!;
+    _surnameController.text = user.lastName!;
+    _emailController.text = user.email!;
+
+    //check any files from user
     var userFiles = user.files;
     if (userFiles != null && userFiles.isNotEmpty) {
       var newImagePaths = <String>[];
@@ -51,7 +58,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    inspect(_imagePaths);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -87,29 +93,19 @@ class _ProfilePageState extends State<ProfilePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 sh(20),
-                Text('Ime i prezime'),
-                sh(10),
-                TextField(
-                  controller: _nameController,
-                ),
+                CustomTextField(label: "Ime", controller: _nameController),
                 sh(20),
-                Text('Adresa'),
-                sh(10),
-                TextField(
-                  controller: _addressController,
-                ),
+                CustomTextField(
+                    label: "Prezime", controller: _surnameController),
                 sh(20),
-                Text('Email'),
-                sh(10),
-                TextField(
+                CustomTextField(
+                  label: "Email",
                   controller: _emailController,
+                  readOnly: true,
                 ),
                 sh(20),
-                Text('Broj telefona'),
-                sh(10),
-                TextField(
-                  controller: _phoneController,
-                ),
+                CustomTextField(
+                    label: "Broj telefona", controller: _phoneController),
                 sh(20),
                 Text('Dokumenti'),
                 sh(10),
@@ -175,9 +171,27 @@ class _ProfilePageState extends State<ProfilePage> {
                 sh(20),
                 CustomButton(
                   label: 'Sacuvaj',
-                  onPressed: () {
-                    if (_imagePaths.isNotEmpty) {
-                      UserServices.uploadUserFiles(_imagePaths);
+                  onPressed: () async {
+                    var userDataToUpdate = {
+                      "id": AuthProvider.instance.user!.id,
+                      "firstName": _nameController.text,
+                      "lastName": _surnameController.text,
+                      "phone": _phoneController.text,
+                      // "email": _emailController.text,
+                    };
+
+                    try {
+                      if (_imagePaths.isNotEmpty) {
+                        await UserServices.uploadUserFiles(_imagePaths);
+                      }
+                      await UserServices.updateUser(userDataToUpdate);
+                      appSnackBar(
+                          context: context,
+                          msg: 'Uspjesno izmjenjeno',
+                          isError: false);
+                    } catch (e) {
+                      return appSnackBar(
+                          context: context, msg: e.toString(), isError: true);
                     }
                   },
                 ),

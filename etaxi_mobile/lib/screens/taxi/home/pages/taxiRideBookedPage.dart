@@ -1,10 +1,14 @@
 import 'dart:developer';
 
+import 'package:etaxi_mobile/models/order_model.dart';
 import 'package:etaxi_mobile/models/user_model.dart';
 import 'package:etaxi_mobile/providers/order_provider.dart';
+import 'package:etaxi_mobile/screens/taxi/home/widgets/cancelRideDialog.dart';
 import 'package:etaxi_mobile/services/user_services.dart';
 import 'package:etaxi_mobile/utils/colors.dart';
 import 'package:etaxi_mobile/utils/sizeConfig.dart';
+import 'package:etaxi_mobile/utils/utilFunctions.dart';
+import 'package:etaxi_mobile/widgets/app_snack_bar.dart';
 import 'package:etaxi_mobile/widgets/custom_button.dart';
 import 'package:etaxi_mobile/widgets/line.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +27,7 @@ class TaxiRideBooked extends StatelessWidget {
           leading: InkWell(
             onTap: () {
               if (OrderProvider.instance.selectedOrder != null) {
+                OrderProvider.instance.resetToInit();
                 Navigator.pop(context);
               } else {
                 OrderProvider.instance
@@ -87,82 +92,73 @@ class TaxiRideBooked extends StatelessWidget {
                               return Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
+                                  Center(
+                                    child: Text("Podaci o vozacu"),
+                                  ),
+                                  sh(10),
                                   Row(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                          CrossAxisAlignment.center,
                                       children: [
-                                        // Container(
-                                        //   height: 60,
-                                        //   width: 60,
-                                        //   color: Colors.red,
-                                        // ),
                                         Expanded(
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.end,
-                                              children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                        '${driver.firstName} ${driver.lastName}'),
-                                                    Text('Status')
-                                                  ],
-                                                ),
-                                                // Row(
-                                                //   mainAxisAlignment:
-                                                //       MainAxisAlignment
-                                                //           .spaceBetween,
-                                                //   children: [
-                                                //     Text('Imae auta koje vozi'),
-                                                //     Text('Statust text ...')
-                                                //   ],
-                                                // ),
-                                                Container(
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20),
-                                                    color: primaryColor,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.end,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Text("Vozac: "),
+                                                  Text(
+                                                    '${driver.firstName} ${driver.lastName}',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600),
                                                   ),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
+                                                ],
+                                              ),
+                                              sh(5),
+                                              Row(
+                                                children: [
+                                                  Text('Status: '),
+                                                  Text(
+                                                      getOrderStatus(
+                                                          OrderProvider.instance
+                                                              .selectedOrder),
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w600))
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Column(
+                                          children: [
+                                            Text('Ocjena: ' +
+                                                '(${driver.ratingGrade?["count"] ?? 0} ukupno)'),
+                                            sh(5),
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                color: primaryColor,
+                                              ),
+                                              width: 60,
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
                                                         horizontal: 8,
                                                         vertical: 3),
-                                                    child: Row(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      children: [
-                                                        Text(
-                                                          '4.8 ★',
-                                                        )
-                                                      ],
-                                                    ),
+                                                child: Center(
+                                                  child: Text(
+                                                    '${driver.ratingGrade?["ratingGrade"] ?? 5} ★',
                                                   ),
                                                 ),
-                                              ],
+                                              ),
                                             ),
-                                          ),
+                                          ],
                                         )
                                       ]),
-                                  sh(8),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        "Prekini voznju",
-                                        style: TextStyle(
-                                            color: Colors.red, fontSize: 16),
-                                      ),
-                                    ],
-                                  )
                                 ],
                               );
                             } else
@@ -170,6 +166,27 @@ class TaxiRideBooked extends StatelessWidget {
                                 child: CircularProgressIndicator(),
                               );
                           }),
+                    ),
+                    Center(
+                      child: MaterialButton(
+                        onPressed: DateTime.now().isAfter(
+                                    OrderProvider.instance.startTime ??
+                                        DateTime.now()) ||
+                                getOrderStatus(
+                                        OrderProvider.instance.selectedOrder) ==
+                                    "Otkazana"
+                            ? null
+                            : () {
+                                showDialog(
+                                    context: context,
+                                    builder: ((context) =>
+                                        CancelOrderDialog()));
+                              },
+                        child: Text("Otkazi voznju"),
+                        color: warningColor,
+                        textColor: Colors.white,
+                        disabledColor: Colors.grey,
+                      ),
                     ),
                     Container(
                       margin: EdgeInsets.symmetric(
@@ -287,6 +304,14 @@ class TaxiRideBooked extends StatelessWidget {
                               OrderProvider
                                   .instance.directions!.totalDistance!),
                           bookingDetailsListTab(
+                              'Vrijeme pocetka',
+                              dateFormat(OrderProvider.instance.startTime ??
+                                      DateTime.now()) +
+                                  ' ' +
+                                  timeFormatDate(
+                                      OrderProvider.instance.startTime ??
+                                          DateTime.now())),
+                          bookingDetailsListTab(
                               'Vrijeme trajanja',
                               OrderProvider
                                   .instance.directions!.totalDuration!),
@@ -309,6 +334,16 @@ class TaxiRideBooked extends StatelessWidget {
                           horizontal: 16, vertical: 16),
                       child: CustomButton(
                         onPressed: () {
+                          if (OrderProvider.instance.startTime !=
+                              null) if (DateTime
+                                  .now()
+                              .isAfter(OrderProvider.instance.startTime!)) {
+                            return appSnackBar(
+                                context: context,
+                                msg:
+                                    "Ne mozete izmjeniti narudzbu koja je prosla",
+                                isError: true);
+                          }
                           OrderProvider.instance.setIsEditOrder(true);
                         },
                         label: 'Izmjeni narudzbu',
@@ -348,4 +383,15 @@ Widget bookingDetailsListTab(String title, String desc) {
       ],
     ),
   );
+}
+
+String getOrderStatus(Order? order) {
+  if (order != null) {
+    if (order.isCanceled != null && order.isCanceled == true) return 'Otkazana';
+    if (order.isActive!)
+      return 'Aktivna';
+    else
+      return 'Zavrsena';
+  } else
+    return 'Aktivna';
 }
