@@ -2,6 +2,7 @@ import 'package:etaxi_admin/providers/auth_provider.dart';
 import 'package:etaxi_admin/providers/main_provider.dart';
 import 'package:etaxi_admin/providers/order_provider.dart';
 import 'package:etaxi_admin/screens/login.dart';
+import 'package:etaxi_admin/spalsh.dart';
 import 'package:etaxi_admin/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: colorSwatch,
           primaryColor: primaryColor,
         ),
-        home: LoginScreen(),
+        home: SplashScreen(),
       ),
     );
   }

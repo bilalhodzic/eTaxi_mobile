@@ -28,6 +28,7 @@ class _LayoutPageAdminState extends State<LayoutPageAdmin> {
         title: Text('Main page'),
       ),
       body: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Drawer(
             width: SizeConfig.screenWidth / 4,
@@ -57,9 +58,10 @@ class _LayoutPageAdminState extends State<LayoutPageAdmin> {
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20),
-            child: Center(
+          Expanded(
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20),
               child: Container(
                 constraints: BoxConstraints(minWidth: 400, minHeight: 400),
                 child: sidebarScreens[_currentIndex],
