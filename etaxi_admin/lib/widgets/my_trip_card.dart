@@ -45,7 +45,7 @@ class MyTripCard extends StatelessWidget {
                   children: [
                     Text(
                       "Korisnik: " +
-                          (order.user?.firstName ?? '') +
+                          (order.user?.firstName ?? 'Nepoznat') +
                           ' ' +
                           (order.user?.lastName ?? ''),
                       style: TextStyle(
@@ -316,7 +316,7 @@ String generateOrderStatus(Order order) {
     return 'Otkazana';
   }
   if (order.isActive != true) {
-    return "Neaktivna";
+    return "Zavrsena";
   } else
     return 'Aktivna';
 }

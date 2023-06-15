@@ -1,4 +1,3 @@
-
 import 'package:etaxi_admin/models/user_model.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -36,8 +35,8 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  setToken(token) {
-    token = token;
+  setToken(userToken) {
+    token = userToken;
     notifyListeners();
   }
 

@@ -6,6 +6,9 @@ import 'package:etaxi_admin/models/user_model.dart';
 import 'package:etaxi_admin/models/vehicle_model.dart';
 import 'package:etaxi_admin/providers/auth_provider.dart';
 import 'package:http/http.dart';
+import 'package:jwt_decode/jwt_decode.dart';
+
+enum UserType { Admin, User, CompanyAdmin }
 
 class UserServices {
   static Future loginService(data) async {
@@ -14,6 +17,11 @@ class UserServices {
     if (res.statusCode == 200) {
       var decoded = jsonDecode(res.body);
       var token = decoded['token'];
+      var parsedToken = Jwt.parseJwt(token);
+      if (!(parsedToken['role'] == UserType.Admin.name ||
+          parsedToken['role'] == UserType.CompanyAdmin.name)) {
+        throw "Zabranjen pristup";
+      }
       AuthProvider.instance.setToken(token);
       var userDecoded = await getUser(decoded['id']);
       AuthProvider.instance.setUser(Userinfo.fromJson(userDecoded));

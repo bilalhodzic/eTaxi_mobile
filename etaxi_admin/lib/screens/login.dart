@@ -3,6 +3,7 @@ import 'package:etaxi_admin/providers/auth_provider.dart';
 import 'package:etaxi_admin/screens/layout_page.dart';
 import 'package:etaxi_admin/services/user_service.dart';
 import 'package:etaxi_admin/utils/sizeConfig.dart';
+import 'package:etaxi_admin/widgets/app_snack_bar.dart';
 import 'package:etaxi_admin/widgets/custom_button.dart';
 import 'package:etaxi_admin/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
@@ -40,19 +41,14 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       await UserServices.loginService(dataToSend);
 
-      print('logged in');
-      // HomeService.getHubs();
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (_) => LayoutPageAdmin(),
         ),
       );
     } catch (e) {
-      inspect(e);
       print(e);
-      //AuthProvider.instance.setError(e, 'login');
-
-      print(e);
+      AuthProvider.instance.setError(e, 'login');
     } finally {
       setState(() {
         isPressed = false;
@@ -150,6 +146,20 @@ class _LoginScreenState extends State<LoginScreen> {
                           login();
                         },
                       )),
+                      sh(20),
+                      Consumer<AuthProvider>(
+                        builder: (context, authProvider, _) {
+                          return authProvider.loginError != null
+                              ? Center(
+                                  child: Text(
+                                    authProvider.loginError!,
+                                    style: TextStyle(
+                                        color: Colors.red, fontSize: 16),
+                                  ),
+                                )
+                              : Container();
+                        },
+                      ),
                       sh(20),
                     ],
                   ))

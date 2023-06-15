@@ -1,4 +1,6 @@
 import 'package:etaxi_admin/providers/auth_provider.dart';
+import 'package:etaxi_admin/providers/main_provider.dart';
+import 'package:etaxi_admin/providers/order_provider.dart';
 import 'package:etaxi_admin/screens/login.dart';
 import 'package:etaxi_admin/screens/main_page.dart';
 import 'package:etaxi_admin/screens/orders_page.dart';
@@ -46,6 +48,8 @@ class _LayoutPageAdminState extends State<LayoutPageAdmin> {
                   title: Text('Odjavi se'),
                   onTap: () {
                     AuthProvider.instance.reset();
+                    OrderProvider.instance.resetToInit();
+                    MainProvider.instance.reset();
                     Navigator.pushReplacement(context,
                         MaterialPageRoute(builder: (context) => LoginScreen()));
                   },

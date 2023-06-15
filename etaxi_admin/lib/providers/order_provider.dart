@@ -134,6 +134,7 @@ class OrderProvider extends ChangeNotifier {
     selectedVehicle = null;
     orderPrice = null;
     totalDistance = null;
+    orderFilters = {};
     DateTime? startTime = null;
     isEditOrder = false;
 

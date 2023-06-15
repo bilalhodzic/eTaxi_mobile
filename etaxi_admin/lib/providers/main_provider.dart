@@ -44,4 +44,11 @@ class MainProvider extends ChangeNotifier {
   void setAllHubs(List<Hub> hubs) {
     _allHub = hubs;
   }
+
+  void reset() {
+    _vehicleType = [];
+    _availableModel = [];
+    _brandModel.clear();
+    _allHub = [];
+  }
 }

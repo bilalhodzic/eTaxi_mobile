@@ -1,3 +1,4 @@
+import 'package:etaxi_admin/providers/auth_provider.dart';
 import 'package:etaxi_admin/services/main_service.dart';
 import 'package:etaxi_admin/utils/sizeConfig.dart';
 import 'package:etaxi_admin/widgets/vehicleType_dialog.dart';
@@ -42,7 +43,11 @@ class VehiclesPage extends StatelessWidget {
           ],
         ),
         sh(20),
-        Text('Pregled svih vozila'),
+        Text(
+          'Pregled svih vozila',
+          style: TextStyle(fontSize: 20),
+        ),
+        sh(16),
         Expanded(
           child: Container(
             width: 550,

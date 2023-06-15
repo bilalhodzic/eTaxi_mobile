@@ -40,7 +40,7 @@ class _VehicleBoxState extends State<VehicleBox> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  width: 67,
+                  width: 150,
                   child: Center(
                     child: CachedNetworkImage(
                       imageUrl: widget.vehicle.photo!,

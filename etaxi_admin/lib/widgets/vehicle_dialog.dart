@@ -262,7 +262,7 @@ class _VehicleDialogState extends State<VehicleDialog> {
           child: Text('Odustani'),
         ),
         TextButton(
-          onPressed: () {
+          onPressed: () async {
             //Send data to server
             var data = {
               "name": name.text,
@@ -282,23 +282,20 @@ class _VehicleDialogState extends State<VehicleDialog> {
               "imageUrl": imageUrl.text,
               "companyId": selectedCompanyId,
             };
-            print(jsonEncode(data));
             if (widget.isEdit) {
               data["id"] = widget.vehicle!.vehicleId;
             }
             try {
               if (widget.isEdit) {
-                mainServices.editVehicle(
+                await mainServices.editVehicle(
                     data: data, id: widget.vehicle!.vehicleId!);
               } else {
-                mainServices.addVehicle(
+                await mainServices.addVehicle(
                   data: data,
                 );
               }
               Navigator.pop(context);
             } catch (e) {
-              print('hereeeee in catch');
-              print(e);
               showDialog(
                   context: context,
                   builder: (context) => ErrorDialog(

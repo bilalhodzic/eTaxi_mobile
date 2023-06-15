@@ -76,13 +76,12 @@ class MainServices {
       inspect(res);
       if (res.statusCode == 200) {
       } else {
-        print(res.body);
         throw res.body;
       }
 
       return res;
     } catch (e) {
-      print('hereee');
+      print(e);
       throw e;
     }
   }

@@ -31,7 +31,7 @@ class _OrderFiltersState extends State<OrderFilters> {
                 value: 'active',
               ),
               DropdownMenuItem(
-                child: Text('Neaktivna'),
+                child: Text('Zavrsena'),
                 value: 'notActive',
               ),
               DropdownMenuItem(

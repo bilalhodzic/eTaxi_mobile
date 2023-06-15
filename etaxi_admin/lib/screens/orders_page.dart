@@ -34,7 +34,11 @@ class _OrdersPageState extends State<OrdersPage> {
           ],
         ),
         sh(16),
-        Text("Pregled Narudzbi"),
+        Text(
+          "Pregled Narudzbi",
+          style: TextStyle(fontSize: 20),
+        ),
+        sh(16),
         Row(
           children: [
             Text("Filteri"),

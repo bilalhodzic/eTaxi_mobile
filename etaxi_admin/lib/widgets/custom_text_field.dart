@@ -162,7 +162,7 @@ class _AppTextFieldPasswordState extends State<CustomTextFieldPassword> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    var b = SizeConfig.screenWidth / 375;
+    var b = SizeConfig.screenWidth / 720;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
