@@ -28,7 +28,7 @@ class AuthProvider extends ChangeNotifier {
 
   setError(err, String type) {
     if (type == 'login') {
-      loginError = err;
+      loginError = err.toString();
     } else if (type == 'register') {
       registerError = err;
     }

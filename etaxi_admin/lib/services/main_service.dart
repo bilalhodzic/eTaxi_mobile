@@ -5,12 +5,12 @@ import 'package:etaxi_admin/api/api_model.dart';
 import 'package:etaxi_admin/models/vehicle_model.dart';
 import 'package:etaxi_admin/models/vehicle_type_model.dart';
 import 'package:etaxi_admin/providers/main_provider.dart';
-import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
 
 class MainServices {
   static Future<List<VehicleType>> getVehicleTypes() async {
     try {
-      Response res = await ApiModels().getRequest(url: 'api/VehicleType');
+      http.Response res = await ApiModels().getRequest(url: 'api/VehicleType');
       var decoded = jsonDecode(res.body);
       List<VehicleType> vehicleTypesList = [];
       for (var item in decoded) {
@@ -24,7 +24,7 @@ class MainServices {
 
   static Future<List<dynamic>> getCompanies() async {
     try {
-      Response res = await ApiModels().getRequest(url: 'api/Company');
+      http.Response res = await ApiModels().getRequest(url: 'api/Company');
       return jsonDecode(res.body);
     } catch (e) {
       throw e;
@@ -35,7 +35,7 @@ class MainServices {
       {Map<String, dynamic>? queryParams = const {}}) async {
     List<VehicleModel> vehicles = [];
     try {
-      Response res = await ApiModels()
+      http.Response res = await ApiModels()
           .getRequest(url: 'api/Vehicle', queryParams: queryParams);
 
       if (res.statusCode == 200) {
@@ -53,7 +53,7 @@ class MainServices {
 
   Future addVehicle({required Map data}) async {
     try {
-      Response res =
+      http.Response res =
           await ApiModels().postRequest(url: 'api/Vehicle', data: data);
       inspect(res);
       if (res.statusCode == 200) {
@@ -71,7 +71,7 @@ class MainServices {
 
   Future editVehicle({required Map data, required int id}) async {
     try {
-      Response res =
+      http.Response res =
           await ApiModels().putRequest(url: 'api/Vehicle/$id', data: data);
       inspect(res);
       if (res.statusCode == 200) {
@@ -88,7 +88,7 @@ class MainServices {
 //Add vehicle type
 
   Future addVehicleType({required Map<String, Object> data}) async {
-    Response res =
+    http.Response res =
         await ApiModels().postRequest(url: 'api/VehicleType', data: data);
     if (res.statusCode == 200) {
       // var token = jsonDecode(res.body)['Token'];
@@ -102,7 +102,7 @@ class MainServices {
   }
 
   Future deleteVehicle({required int id}) async {
-    Response res = await ApiModels().deleteRequest(url: 'api/Vehicle/$id');
+    http.Response res = await ApiModels().deleteRequest(url: 'api/Vehicle/$id');
     if (res.statusCode == 200) {
       //var token = jsonDecode(res.body)['Token'];
       //AuthProvider.instance.setToken(token);
@@ -111,5 +111,31 @@ class MainServices {
       print(res.body);
     }
     return res;
+  }
+
+  static Future<Map<String, dynamic>> getReport(
+      [DateTime? from, DateTime? to]) async {
+    try {
+      http.Response res =
+          await ApiModels().getRequest(url: 'api/Report', queryParams: {
+        'StartDate': from?.toIso8601String() ?? null,
+        'EndDate': to?.toIso8601String() ?? null
+      });
+
+      return jsonDecode(res.body);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  static Future<String> getLocationFromLatLng(double lat, double long) async {
+    try {
+      http.Response res = await http.get(Uri.parse(
+          'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$long&key=$googleApiKey&language=en'));
+
+      return jsonDecode(res.body)["results"][0]["formatted_address"];
+    } catch (e) {
+      throw e;
+    }
   }
 }

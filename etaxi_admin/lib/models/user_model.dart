@@ -60,4 +60,8 @@ class Userinfo {
     //userCreatedTime = DateTime.parse(json['UserCreatedTime']);
     // verifiedAccount = json['VerifiedAccount'] ?? 0;
   }
+
+  String fullName() {
+    return '$firstName $lastName';
+  }
 }

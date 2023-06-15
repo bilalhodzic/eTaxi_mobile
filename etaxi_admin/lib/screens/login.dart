@@ -39,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
       'password': pwdController.text
     };
     try {
-      //await UserServices.loginService(dataToSend);
+      await UserServices.loginService(dataToSend);
 
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(

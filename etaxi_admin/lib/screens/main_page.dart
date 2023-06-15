@@ -1,112 +1,237 @@
 import 'package:date_time_picker/date_time_picker.dart';
-import 'package:etaxi_admin/widgets/custom_button.dart';
+import 'package:etaxi_admin/models/user_model.dart';
+import 'package:etaxi_admin/services/main_service.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 // ignore: must_be_immutable
-class MainPageAdmin extends StatelessWidget {
+class MainPageAdmin extends StatefulWidget {
   MainPageAdmin({super.key});
 
-  String? fromDate;
-  String? toDate;
+  @override
+  State<MainPageAdmin> createState() => _MainPageAdminState();
+}
+
+class _MainPageAdminState extends State<MainPageAdmin> {
+  DateTime? fromDate;
+
+  DateTime? toDate;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.all(20),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Od datuma:',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: DateTimePicker(
-                        initialValue: '',
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime(2100),
-                        dateLabelText: 'Datum',
-                        onChanged: (val) => fromDate = val,
-                        validator: (val) {
-                          return null;
-                        },
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Od datuma:',
+                        style: TextStyle(fontSize: 16),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(width: 20),
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Do datuma:',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: DateTimePicker(
-                        initialValue: '',
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime(2100),
-                        dateLabelText: 'Datum',
-                        onChanged: (val) => toDate = val,
-                        validator: (val) {
-                          return null;
-                        },
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: DateTimePicker(
+                          initialValue: '',
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2100),
+                          dateLabelText: 'Datum',
+                          onChanged: (val) => fromDate = DateTime.tryParse(val),
+                          validator: (val) {
+                            return null;
+                          },
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                width: 20,
-              ),
-              SizedBox(
-                height: 54,
-                width: 120,
-                child: MaterialButton(
-                  onPressed: () {},
-                  color: Colors.black,
-                  child: Text(
-                    'Primjeni',
-                    style: TextStyle(color: Colors.white),
+                    ],
                   ),
                 ),
-              ),
-            ],
-          ),
-          SizedBox(height: 20),
-          Wrap(
-            spacing: 20,
-            runSpacing: 20,
-            children: [
-              _buildStatisticTile('Ukupan broj narudžbi', 69),
-              _buildStatisticTile('Zarada', 69),
-              _buildStatisticTile('Otkazane narudžbe', 69),
-              _buildStatisticTile('Vožnje po korisniku', 69),
-              _buildStatisticTile('Vožnje po vozaču', 69),
-              _buildStatisticTile('Vožnje po vozilu', 69),
-              _buildStatisticTile('Najkorištenija ruta taksi vozila', 'Ruta A'),
-              _buildStatisticTile(
-                  'Najprometniji dan i vrijeme', 'Ponedjeljak, 9 AM'),
-              _buildStatisticTile(
-                  'Zaposlenik sa najviše narudžbi', 'Petar Petrovic'),
-            ],
-          ),
-        ],
+                SizedBox(width: 20),
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Do datuma:',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: DateTimePicker(
+                          initialValue: '',
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2100),
+                          dateLabelText: 'Datum',
+                          onChanged: (val) => toDate = DateTime.tryParse(val),
+                          validator: (val) {
+                            return null;
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  width: 20,
+                ),
+                SizedBox(
+                  height: 54,
+                  width: 120,
+                  child: MaterialButton(
+                    onPressed: () {
+                      setState(() {});
+                    },
+                    color: Colors.black,
+                    child: Text(
+                      'Primjeni',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 20),
+            FutureBuilder<Map<String, dynamic>>(
+                future: MainServices.getReport(fromDate, toDate),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    var data = snapshot.data!;
+                    return Wrap(
+                      spacing: 20,
+                      runSpacing: 20,
+                      children: [
+                        _buildStatisticTile(
+                          'Ukupan broj narudžbi',
+                          Text(
+                            data['totalOrders'].toString(),
+                            style: TextStyle(fontSize: 24),
+                          ),
+                        ),
+                        _buildStatisticTile(
+                          'Zarada',
+                          Text(
+                            data['totalEarnedMoney'].toString(),
+                            style: TextStyle(fontSize: 24),
+                          ),
+                        ),
+                        _buildStatisticTile(
+                          'Otkazane narudžbe',
+                          Text(
+                            data['totalCanceledOrders'].toString(),
+                            style: TextStyle(fontSize: 24),
+                          ),
+                        ),
+                        _buildStatisticTile(
+                          'Zaposlenik sa najviše narudžbi',
+                          Text(
+                            Userinfo.fromJson(data['driverWithMostOrders'])
+                                .fullName(),
+                            style: TextStyle(fontSize: 24),
+                          ),
+                        ),
+                        _buildStatisticTile(
+                          'Vožnje po korisniku',
+                          Column(
+                            children: List<Map<String, dynamic>>.from(
+                                    data['userOrderCount'])
+                                .map((e) {
+                              return Text(
+                                e['userId'] == null
+                                    ? '${e['orderCount']} - Nepoznat'
+                                    : '${e['orderCount']} - ${e['userName']}',
+                                style: TextStyle(fontSize: 24),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                        _buildStatisticTile(
+                            'Vožnje po vozilu',
+                            Column(
+                              children: List<Map<String, dynamic>>.from(
+                                      data['vehicleOrderCount'])
+                                  .map((e) {
+                                return Text(
+                                  '${e['orderCount']} - ${e['vehicleName']}',
+                                  style: TextStyle(fontSize: 24),
+                                );
+                              }).toList(),
+                            )),
+                        _buildStatisticTile(
+                            'Najprometnije vrijeme za vožnju',
+                            Column(
+                              children: List<Map<String, dynamic>>.from(
+                                      data['mostFrequentTime'])
+                                  .map((e) {
+                                return Text(
+                                  getDateString(e),
+                                  style: TextStyle(fontSize: 24),
+                                );
+                              }).toList(),
+                            )),
+                        _buildStatisticTile(
+                          'Najkorištenija ruta taksi vozila',
+                          Column(
+                            children: [
+                              FutureBuilder(
+                                  future: MainServices.getLocationFromLatLng(
+                                      data['mostFrequentRoute'][0]['route']
+                                          ['startLocation']['latitude'],
+                                      data['mostFrequentRoute'][0]['route']
+                                          ['startLocation']['longitude']),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasData)
+                                      return Text(
+                                        'Polazak - ${snapshot.data}',
+                                        style: TextStyle(fontSize: 24),
+                                      );
+                                    return CircularProgressIndicator();
+                                  }),
+                              SizedBox(
+                                height: 12,
+                              ),
+                              FutureBuilder(
+                                  future: MainServices.getLocationFromLatLng(
+                                      data['mostFrequentRoute'][0]['route']
+                                          ['endLocation']['latitude'],
+                                      data['mostFrequentRoute'][0]['route']
+                                          ['endLocation']['longitude']),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasData)
+                                      return Text(
+                                        'Destinacija - ${snapshot.data}',
+                                        style: TextStyle(fontSize: 24),
+                                      );
+                                    return CircularProgressIndicator();
+                                  }),
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+
+                  if (snapshot.connectionState == ConnectionState.waiting)
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 28.0),
+                    child: Center(
+                      child: Text('Nema podataka za izabrani vremenski period'),
+                    ),
+                  );
+                }),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildStatisticTile(String title, dynamic value) {
+  Widget _buildStatisticTile(String title, Widget value) {
     return Card(
       child: Padding(
         padding: EdgeInsets.all(20),
@@ -117,13 +242,21 @@ class MainPageAdmin extends StatelessWidget {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 10),
-            Text(
-              value.toString(),
-              style: TextStyle(fontSize: 24),
-            ),
+            value
           ],
         ),
       ),
     );
+  }
+
+  String getDateString(dynamic data) {
+    DateTime dateTime =
+        DateTime.parse("0001-00-00 ${data['hourRange'].split('.')[1]}");
+
+    int days = int.parse(data['hourRange'].split('.')[0]);
+    dateTime = dateTime.add(Duration(days: days));
+
+    return DateFormat('HH:mm ').format(dateTime) +
+        ' - Broj vožnji: ${data['count']}';
   }
 }
