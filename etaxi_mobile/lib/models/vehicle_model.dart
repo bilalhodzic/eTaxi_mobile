@@ -42,19 +42,19 @@ class VehicleModel {
 
   VehicleModel.fromJson(Map<String, dynamic> json) {
     vehicleId = json['id'] ?? 0;
-    typeId = json['type']["typeId"] ?? 0;
+    typeId = json['type'] != null ? json["type"]["typeId"] : 0;
     photo = json['imageUrl'] ?? '';
     vehicleName = json['name'] ?? 'Vozilo';
     price = json['pricePerKm'] ?? 100;
-    seater = json['type']["numberOfSeats"] ?? 5;
+    seater = json['type'] != null ? json["type"]["numberOfSeats"] : 5;
     fuelType = json['fuelType'] ?? 'Dizel';
     transmission = json['transmission'] ?? 'Manual';
     year = json['year'] ?? 0;
-    airBags = json['airBag'] ?? false;
+    airBags = json['airBag'] ?? true;
     brand = json['brand'] ?? '';
     kmTraveled = json['kmTraveled'] ?? 0;
     licenceNumber = json['licenceNumber'] ?? '';
-    airCondition = json['airCondition'] ?? false;
+    airCondition = json['airCondition'] ?? true;
     color = json['color'] ?? '';
     driverId = json['userDriverId'] ?? 0;
     companyId = json['companyId'] ?? 0;

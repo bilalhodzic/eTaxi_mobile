@@ -45,6 +45,7 @@ class CancelOrderDialog extends StatelessWidget {
             try {
               await OrderServices.cancelOrder(data);
               Navigator.of(context).pop();
+              OrderProvider.instance.resetStateFunction();
               return appSnackBar(
                   context: context, msg: "Narudzba otkazana", isError: false);
             } catch (e) {

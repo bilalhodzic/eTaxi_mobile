@@ -52,6 +52,7 @@ class UserServices {
   static Future resetPassword(data) async {
     Response res = await ApiModels()
         .postRequest(url: 'api/Auth/reset-password', data: data);
+    inspect(res);
     if (res.statusCode == 200) {
     } else {
       throw jsonDecode(res.body)['title'];

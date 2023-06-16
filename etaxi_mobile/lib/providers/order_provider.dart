@@ -27,6 +27,8 @@ class OrderProvider extends ChangeNotifier {
 
   OrderProvider._();
 
+  bool resetState = false;
+
   //Taxi order part START
   Location? currentLocationData;
   Location? destinationLocationData;
@@ -49,6 +51,11 @@ class OrderProvider extends ChangeNotifier {
 
   void setVehicleFilters(Map<String, dynamic> filters) {
     vehicleFilters = filters;
+    notifyListeners();
+  }
+
+  void resetStateFunction() {
+    resetState = !resetState;
     notifyListeners();
   }
 

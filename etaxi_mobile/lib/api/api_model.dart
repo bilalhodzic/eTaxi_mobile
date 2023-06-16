@@ -4,9 +4,10 @@ import 'dart:developer';
 import 'package:etaxi_mobile/providers/auth_provider.dart';
 import 'package:http/http.dart' as http;
 
-const realDeviceUri = 'https://192.168.1.108:45455/';
+const realDeviceUri = '192.168.1.108:7152';
 const localUri = '10.0.2.2:7152';
 const googleApiKey = 'AIzaSyBllt8BR5FXxa6kmBRODoh08Rg__uQ3sCA';
+const ngRokUri = '9114-188-127-110-53.ngrok-free.app';
 
 class ApiModels {
   String apiUrl = localUri;

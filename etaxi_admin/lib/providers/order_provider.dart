@@ -142,7 +142,7 @@ class OrderProvider extends ChangeNotifier {
     orderPrice = null;
     totalDistance = null;
     orderFilters = {};
-    DateTime? startTime = null;
+    startTime = null;
     isEditOrder = false;
 
     orderId = null;

@@ -43,6 +43,7 @@ class _HomeTaxiState extends State<HomeTaxi> {
 
     final loc = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.bestForNavigation);
+
     List<Placemark> placemarks =
         await placemarkFromCoordinates(loc.latitude, loc.longitude);
     Placemark place = placemarks[0];

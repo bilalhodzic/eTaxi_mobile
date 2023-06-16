@@ -29,7 +29,21 @@ class BookingPage extends StatefulWidget {
 
 class _BookingPageState extends State<BookingPage> {
   TextEditingController _promoCodeController = TextEditingController();
+  TextEditingController _startTimeController = TextEditingController();
+
   bool isVehicleFilterOpen = false;
+
+  @override
+  void initState() {
+    if (OrderProvider.instance.selectedOrder != null) {
+      _startTimeController.text =
+          OrderProvider.instance.selectedOrder!.startTime.toString();
+    } else {
+      _startTimeController.text = DateTime.now().toString();
+    }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -206,9 +220,7 @@ class _BookingPageState extends State<BookingPage> {
                     Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: DateTimePicker(
-                          initialValue: dateFormat(
-                              OrderProvider.instance.startTime ??
-                                  DateTime.now()),
+                          controller: _startTimeController,
                           dateMask: "dd.MM.yyyy HH:mm",
                           type: DateTimePickerType.dateTime,
                           initialDate: OrderProvider.instance.startTime ??
@@ -216,6 +228,9 @@ class _BookingPageState extends State<BookingPage> {
                           firstDate: DateTime.now(),
                           lastDate: DateTime.now().add(Duration(days: 5)),
                           onChanged: (newValue) {
+                            setState(() {
+                              _startTimeController.text = newValue;
+                            });
                             OrderProvider.instance
                                 .setStartTime(DateTime.parse(newValue));
                           },
@@ -254,6 +269,10 @@ class _BookingPageState extends State<BookingPage> {
                                 'Udaljenost',
                                 OrderProvider
                                     .instance.directions!.totalDistance!),
+                            bookingDetailsListTab(
+                                'Vrijeme trajanja',
+                                OrderProvider
+                                    .instance.directions!.totalDuration!),
                             sh(8),
                             line(),
                             sh(8),
@@ -376,10 +395,12 @@ class _BookingPageState extends State<BookingPage> {
                                         ],
                                       ));
                             } catch (e) {
+                              print(
+                                  'ERROR IN ORDER CREATE/UPDTAE ${e.toString()}');
                               appSnackBar(
                                   context: context,
                                   msg:
-                                      "Doslo je do greske prilikom kreiranja narduzbe",
+                                      'Doslo je do greske prilikom ${OrderProvider.instance.isEditOrder ? "izmjene" : "kreiranja"} narudzbe',
                                   isError: true);
                             }
                           },

@@ -61,7 +61,8 @@ class OrderServices {
           await ApiModels().postRequest(url: 'api/Order', data: dataToSend);
       if (res.statusCode == 200) {
         var decoded = jsonDecode(res.body);
-        OrderProvider.instance.setOrderId(decoded);
+        inspect(decoded);
+        OrderProvider.instance.setOrderId(decoded["id"]);
         return decoded;
       }
     } catch (e) {
@@ -74,11 +75,13 @@ class OrderServices {
     var vehicle = OrderProvider.instance.selectedVehicle!;
 
     var startLocationId = OrderProvider.instance.currentLocationData!.id;
+
     var endLocationId = OrderProvider.instance.destinationLocationData!.id;
+    print(endLocationId);
 
 //if you change location in update order, create new location
     if (startLocationId !=
-        OrderProvider.instance.selectedOrder!.startLocation!.id) {
+        OrderProvider.instance.selectedOrder?.startLocation?.id) {
       var startLocationData = {
         "address": OrderProvider.instance.currentLocationData?.address,
         "latitude": OrderProvider.instance.currentLocationData?.latitude,
@@ -91,7 +94,7 @@ class OrderServices {
       OrderProvider.instance.currentLocationData!.id = startLocationId;
     }
     if (endLocationId !=
-        OrderProvider.instance.selectedOrder!.endLocation!.id) {
+        OrderProvider.instance.selectedOrder?.endLocation?.id) {
       var endLocationData = {
         "address": OrderProvider.instance.destinationLocationData?.address,
         "latitude": OrderProvider.instance.destinationLocationData?.latitude,
@@ -120,10 +123,10 @@ class OrderServices {
           OrderProvider.instance.paymentMethod == PaymentMethod.CASH
               ? "Gotovina"
               : "Online",
-      //"isCanceled": true,
-      //"cancelReason": "string",
+
       //"endTime": "2023-05-18T15:44:06.127Z"
     };
+    inspect(orderToUpdate);
 
     try {
       Response res =
@@ -155,6 +158,20 @@ class OrderServices {
     try {
       Response res = await ApiModels()
           .putRequest(url: 'api/Order/setOrderStatus', data: data);
+      inspect(res);
+      if (res.statusCode == 200) {
+        return jsonDecode(res.body);
+      }
+    } catch (e) {
+      print(e);
+      throw e;
+    }
+  }
+
+  static Future addOrderRating(data) async {
+    try {
+      Response res =
+          await ApiModels().postRequest(url: 'api/Rating', data: data);
       inspect(res);
       if (res.statusCode == 200) {
         return jsonDecode(res.body);

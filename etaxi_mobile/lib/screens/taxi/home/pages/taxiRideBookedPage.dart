@@ -12,6 +12,7 @@ import 'package:etaxi_mobile/widgets/app_snack_bar.dart';
 import 'package:etaxi_mobile/widgets/custom_button.dart';
 import 'package:etaxi_mobile/widgets/line.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class TaxiRideBooked extends StatelessWidget {
@@ -137,24 +138,22 @@ class TaxiRideBooked extends StatelessWidget {
                                             Text('Ocjena: ' +
                                                 '(${driver.ratingGrade?["count"] ?? 0} ukupno)'),
                                             sh(5),
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                                color: primaryColor,
+                                            RatingBar.builder(
+                                              initialRating: driver
+                                                      .ratingGrade?[
+                                                          "ratingGrade"]
+                                                      .toDouble() ??
+                                                  5,
+                                              minRating: 1,
+                                              ignoreGestures: true,
+                                              direction: Axis.horizontal,
+                                              itemCount: 5,
+                                              itemSize: 20,
+                                              itemBuilder: (context, _) => Icon(
+                                                Icons.star,
+                                                color: Colors.amber,
                                               ),
-                                              width: 60,
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 8,
-                                                        vertical: 3),
-                                                child: Center(
-                                                  child: Text(
-                                                    '${driver.ratingGrade?["ratingGrade"] ?? 5} ★',
-                                                  ),
-                                                ),
-                                              ),
+                                              onRatingUpdate: (val) {},
                                             ),
                                           ],
                                         )
@@ -188,6 +187,37 @@ class TaxiRideBooked extends StatelessWidget {
                         disabledColor: Colors.grey,
                       ),
                     ),
+                    if (OrderProvider.instance.selectedOrder != null &&
+                        OrderProvider.instance.selectedOrder?.cancelReason !=
+                            null)
+                      Container(
+                        margin: EdgeInsets.symmetric(
+                          horizontal: 15,
+                          vertical: 15,
+                        ),
+                        padding: EdgeInsets.fromLTRB(17, 20, 17, 20),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Color(0xff0000000).withOpacity(0.1),
+                              spreadRadius: 0,
+                              blurRadius: 4,
+                              offset: Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text("Razlog otkazivanja:"),
+                            sh(10),
+                            Text(OrderProvider
+                                .instance.selectedOrder!.cancelReason!),
+                          ],
+                        ),
+                      ),
                     Container(
                       margin: EdgeInsets.symmetric(
                         horizontal: 15,
@@ -295,6 +325,12 @@ class TaxiRideBooked extends StatelessWidget {
                           bookingDetailsListTab('Pregled narudzbe', ''),
                           line(),
                           sh(8),
+                          bookingDetailsListTab('Id narudzbe',
+                              OrderProvider.instance.orderId.toString()),
+                          bookingDetailsListTab(
+                              'Status narudzbe',
+                              getOrderStatus(
+                                  OrderProvider.instance.selectedOrder)),
                           bookingDetailsListTab(
                               'Naziv vozila',
                               OrderProvider

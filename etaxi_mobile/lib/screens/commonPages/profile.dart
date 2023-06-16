@@ -27,6 +27,8 @@ class _ProfilePageState extends State<ProfilePage> {
   TextEditingController _surnameController = TextEditingController();
   TextEditingController _phoneController = TextEditingController();
 
+  bool isPressed = false;
+
   @override
   void initState() {
     getUserProfile();
@@ -169,32 +171,43 @@ class _ProfilePageState extends State<ProfilePage> {
                   ],
                 ),
                 sh(20),
-                CustomButton(
-                  label: 'Sacuvaj',
-                  onPressed: () async {
-                    var userDataToUpdate = {
-                      "id": AuthProvider.instance.user!.id,
-                      "firstName": _nameController.text,
-                      "lastName": _surnameController.text,
-                      "phone": _phoneController.text,
-                      // "email": _emailController.text,
-                    };
+                isPressed
+                    ? LoadingButton()
+                    : CustomButton(
+                        label: 'Sacuvaj',
+                        onPressed: () async {
+                          setState(() {
+                            isPressed = true;
+                          });
+                          var userDataToUpdate = {
+                            "id": AuthProvider.instance.user!.id,
+                            "firstName": _nameController.text,
+                            "lastName": _surnameController.text,
+                            "phone": _phoneController.text,
+                            // "email": _emailController.text,
+                          };
 
-                    try {
-                      if (_imagePaths.isNotEmpty) {
-                        await UserServices.uploadUserFiles(_imagePaths);
-                      }
-                      await UserServices.updateUser(userDataToUpdate);
-                      appSnackBar(
-                          context: context,
-                          msg: 'Uspjesno izmjenjeno',
-                          isError: false);
-                    } catch (e) {
-                      return appSnackBar(
-                          context: context, msg: e.toString(), isError: true);
-                    }
-                  },
-                ),
+                          try {
+                            if (_imagePaths.isNotEmpty) {
+                              await UserServices.uploadUserFiles(_imagePaths);
+                            }
+                            await UserServices.updateUser(userDataToUpdate);
+                            appSnackBar(
+                                context: context,
+                                msg: 'Uspjesno izmjenjeno',
+                                isError: false);
+                          } catch (e) {
+                            return appSnackBar(
+                                context: context,
+                                msg: e.toString(),
+                                isError: true);
+                          } finally {
+                            setState(() {
+                              isPressed = false;
+                            });
+                          }
+                        },
+                      ),
               ],
             ),
           ),

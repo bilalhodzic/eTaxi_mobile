@@ -141,13 +141,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 ),
                 sh(20),
                 Center(
-                  child: isPressed
-                      ? LoadingButton()
-                      : CustomButton(
-                          label: 'Resetuj',
-                          onPressed: resetPass,
-                        ),
-                ),
+                    child: isPressed
+                        ? LoadingButton()
+                        : CustomButton(label: 'Resetuj', onPressed: resetPass)),
                 if (error != null)
                   Padding(
                     padding: const EdgeInsets.all(8.0),

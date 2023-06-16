@@ -32,8 +32,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
-    emailController.text = 'admin@admin.com';
-    pwdController.text = 'test12345';
+    // emailController.text = 'admin@admin.com';
+    // pwdController.text = 'test12345';
     super.initState();
   }
 
@@ -149,17 +149,21 @@ class _LoginScreenState extends State<LoginScreen> {
                               fontSize: 14))),
                   SizedBox(height: 20),
                   Center(
-                      child: CustomButton(
-                    label: 'Login',
-                    onPressed: () async {
-                      FocusScope.of(context).unfocus();
-                      if (!_formKey.currentState!.validate()) return null;
+                      child: isPressed
+                          ? LoadingButton()
+                          : CustomButton(
+                              label: 'Login',
+                              onPressed: () async {
+                                FocusScope.of(context).unfocus();
+                                if (!_formKey.currentState!.validate())
+                                  return null;
 
-                      isPressed = true;
-                      setState(() {});
-                      login();
-                    },
-                  )),
+                                setState(() {
+                                  isPressed = true;
+                                });
+                                login();
+                              },
+                            )),
                   SizedBox(height: 10),
                   Consumer<AuthProvider>(
                       builder: (context, authProvider, child) {

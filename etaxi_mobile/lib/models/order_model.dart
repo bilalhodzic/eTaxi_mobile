@@ -1,4 +1,5 @@
 import 'package:etaxi_mobile/models/location_model.dart';
+import 'package:etaxi_mobile/models/rating_model.dart';
 import 'package:etaxi_mobile/models/user_model.dart';
 import 'package:etaxi_mobile/models/vehicle_model.dart';
 
@@ -16,6 +17,8 @@ class Order {
   bool? isSelfDrive;
   DateTime? startTime;
   String? paymentMethod;
+  String? cancelReason;
+  RatingModel? rating;
 
   Order(
       {this.id,
@@ -30,6 +33,8 @@ class Order {
       this.startTime,
       this.paymentMethod,
       this.user,
+      this.cancelReason,
+      this.rating,
       this.isCanceled});
 
   factory Order.fromJson(Map<String, dynamic> json) => Order(
@@ -45,5 +50,8 @@ class Order {
       startTime: DateTime.parse(json["startTime"]),
       paymentMethod: json["paymentMethod"],
       isCanceled: json["isCanceled"],
+      cancelReason: json["cancelReason"],
+      rating:
+          json["rating"] != null ? RatingModel.fromJson(json["rating"]) : null,
       user: json["user"] != null ? Userinfo.fromJson(json["user"]) : null);
 }
