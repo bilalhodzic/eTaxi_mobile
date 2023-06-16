@@ -52,7 +52,10 @@ class VehiclesPage extends StatelessWidget {
           child: Container(
             width: 550,
             child: FutureBuilder(
-              future: MainServices.getVehicles(),
+              future: MainServices.getVehicles(queryParams: {
+                "CompanyId":
+                    AuthProvider.instance.user!.companyId?.toString() ?? null
+              }),
               builder: ((context, snapshot) {
                 if (snapshot.hasError) {
                   print(snapshot.error);

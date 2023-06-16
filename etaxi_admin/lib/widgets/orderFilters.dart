@@ -1,6 +1,6 @@
+import 'package:etaxi_admin/providers/auth_provider.dart';
 import 'package:etaxi_admin/providers/order_provider.dart';
 import 'package:etaxi_admin/utils/sizeConfig.dart';
-import 'package:etaxi_admin/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 
 class OrderFilters extends StatefulWidget {
@@ -16,6 +16,7 @@ class _OrderFiltersState extends State<OrderFilters> {
   String? selectedPaymentMethod;
   bool? isActive;
   bool? isCanceled;
+  String? statusValue;
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +26,7 @@ class _OrderFiltersState extends State<OrderFilters> {
       child: Column(
         children: [
           DropdownButtonFormField<String>(
+            value: statusValue,
             items: [
               DropdownMenuItem(
                 child: Text('Aktivna'),
@@ -51,7 +53,7 @@ class _OrderFiltersState extends State<OrderFilters> {
                     break;
                   case 'notActive':
                     isActive = false;
-                    isCanceled = null;
+                    isCanceled = false;
                     break;
                   case 'canceled':
                     isCanceled = true;
@@ -59,6 +61,7 @@ class _OrderFiltersState extends State<OrderFilters> {
                     break;
                   default:
                 }
+                statusValue = value;
               });
             },
           ),
@@ -84,19 +87,52 @@ class _OrderFiltersState extends State<OrderFilters> {
             },
           ),
           sh(10),
-          CustomButton(
-              label: "Primjeni",
-              onPressed: () {
-                Map<String, dynamic> filters = {};
+          Row(
+            children: [
+              if (isActive != null ||
+                  isCanceled != null ||
+                  selectedPaymentMethod != null)
+                MaterialButton(
+                    child: Text("Ocisti"),
+                    height: 50,
+                    onPressed: () {
+                      setState(() {
+                        isActive = null;
+                        isCanceled = null;
+                        selectedPaymentMethod = null;
+                        statusValue = null;
+                      });
+                      Map<String, dynamic> filters = {};
+                      if (AuthProvider.instance.user!.companyId != null)
+                        filters['CompanyId'] =
+                            AuthProvider.instance.user!.companyId.toString();
 
-                if (isActive != null) filters['IsActive'] = isActive.toString();
-                if (isCanceled != null)
-                  filters['IsCanceled'] = isCanceled.toString();
-                if (selectedPaymentMethod != null)
-                  filters['PaymentMethod'] = selectedPaymentMethod;
+                      OrderProvider.instance.setOrderFilters(filters);
+                    }),
+              sb(5),
+              MaterialButton(
+                  child:
+                      Text("Primjeni", style: TextStyle(color: Colors.white)),
+                  color: Colors.black,
+                  minWidth: 100,
+                  height: 50,
+                  onPressed: () {
+                    Map<String, dynamic> filters = {};
 
-                OrderProvider.instance.setOrderFilters(filters);
-              })
+                    if (isActive != null)
+                      filters['IsActive'] = isActive.toString();
+                    if (isCanceled != null)
+                      filters['IsCanceled'] = isCanceled.toString();
+                    if (selectedPaymentMethod != null)
+                      filters['PaymentMethod'] = selectedPaymentMethod;
+                    if (AuthProvider.instance.user!.companyId != null)
+                      filters['CompanyId'] =
+                          AuthProvider.instance.user!.companyId.toString();
+
+                    OrderProvider.instance.setOrderFilters(filters);
+                  }),
+            ],
+          )
         ],
       ),
     );

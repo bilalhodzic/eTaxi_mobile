@@ -114,12 +114,13 @@ class MainServices {
   }
 
   static Future<Map<String, dynamic>> getReport(
-      [DateTime? from, DateTime? to]) async {
+      [DateTime? from, DateTime? to, int? companyId]) async {
     try {
       http.Response res =
           await ApiModels().getRequest(url: 'api/Report', queryParams: {
         'StartDate': from?.toIso8601String() ?? null,
-        'EndDate': to?.toIso8601String() ?? null
+        'EndDate': to?.toIso8601String() ?? null,
+        'CompanyId': companyId?.toString() ?? null
       });
 
       return jsonDecode(res.body);

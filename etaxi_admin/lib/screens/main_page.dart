@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:etaxi_admin/models/user_model.dart';
+import 'package:etaxi_admin/providers/auth_provider.dart';
 import 'package:etaxi_admin/services/main_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -96,7 +99,8 @@ class _MainPageAdminState extends State<MainPageAdmin> {
             ),
             SizedBox(height: 20),
             FutureBuilder<Map<String, dynamic>>(
-                future: MainServices.getReport(fromDate, toDate),
+                future: MainServices.getReport(
+                    fromDate, toDate, AuthProvider.instance.user!.companyId),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     var data = snapshot.data!;
@@ -112,9 +116,9 @@ class _MainPageAdminState extends State<MainPageAdmin> {
                           ),
                         ),
                         _buildStatisticTile(
-                          'Zarada',
+                          'Ukupno zarađeno',
                           Text(
-                            data['totalEarnedMoney'].toString(),
+                            data['totalEarnedMoney'].toString() + ' KM',
                             style: TextStyle(fontSize: 24),
                           ),
                         ),
@@ -134,44 +138,13 @@ class _MainPageAdminState extends State<MainPageAdmin> {
                           ),
                         ),
                         _buildStatisticTile(
-                          'Vožnje po korisniku',
-                          Column(
-                            children: List<Map<String, dynamic>>.from(
-                                    data['userOrderCount'])
-                                .map((e) {
-                              return Text(
-                                e['userId'] == null
-                                    ? '${e['orderCount']} - Nepoznat'
-                                    : '${e['orderCount']} - ${e['userName']}',
-                                style: TextStyle(fontSize: 24),
-                              );
-                            }).toList(),
+                          'Korisnik sa najviše narudžbi',
+                          Text(
+                            Userinfo.fromJson(data['userWithMostOrders'])
+                                .fullName(),
+                            style: TextStyle(fontSize: 24),
                           ),
                         ),
-                        _buildStatisticTile(
-                            'Vožnje po vozilu',
-                            Column(
-                              children: List<Map<String, dynamic>>.from(
-                                      data['vehicleOrderCount'])
-                                  .map((e) {
-                                return Text(
-                                  '${e['orderCount']} - ${e['vehicleName']}',
-                                  style: TextStyle(fontSize: 24),
-                                );
-                              }).toList(),
-                            )),
-                        _buildStatisticTile(
-                            'Najprometnije vrijeme za vožnju',
-                            Column(
-                              children: List<Map<String, dynamic>>.from(
-                                      data['mostFrequentTime'])
-                                  .map((e) {
-                                return Text(
-                                  getDateString(e),
-                                  style: TextStyle(fontSize: 24),
-                                );
-                              }).toList(),
-                            )),
                         _buildStatisticTile(
                           'Najkorištenija ruta taksi vozila',
                           Column(
@@ -210,6 +183,45 @@ class _MainPageAdminState extends State<MainPageAdmin> {
                             ],
                           ),
                         ),
+                        _buildStatisticTile(
+                          'Narudžbe po korisniku',
+                          Column(
+                            children: List<Map<String, dynamic>>.from(
+                                    data['userOrderCount'])
+                                .map((e) {
+                              return Text(
+                                e['userId'] == null
+                                    ? 'Narudzbe: ${e['orderCount']} - Nepoznat'
+                                    : 'Narudzbe: ${e['orderCount']} - ${e['userName']}',
+                                style: TextStyle(fontSize: 24),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                        _buildStatisticTile(
+                            'Narudžbe po vozilu',
+                            Column(
+                              children: List<Map<String, dynamic>>.from(
+                                      data['vehicleOrderCount'])
+                                  .map((e) {
+                                return Text(
+                                  'Narudzbe: ${e['orderCount']} - ${e['vehicleName']}',
+                                  style: TextStyle(fontSize: 24),
+                                );
+                              }).toList(),
+                            )),
+                        _buildStatisticTile(
+                            'Najprometnije vrijeme za vožnju',
+                            Column(
+                              children: List<Map<String, dynamic>>.from(
+                                      data['mostFrequentTime'])
+                                  .map((e) {
+                                return Text(
+                                  'Narudzbe: ${e["count"]} - ${e["hourRange"]}',
+                                  style: TextStyle(fontSize: 24),
+                                );
+                              }).toList(),
+                            )),
                       ],
                     );
                   }

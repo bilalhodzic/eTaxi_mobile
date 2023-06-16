@@ -1,6 +1,7 @@
 import 'package:etaxi_admin/models/order_model.dart';
 import 'package:etaxi_admin/providers/order_provider.dart';
 import 'package:etaxi_admin/services/order_service.dart';
+import 'package:etaxi_admin/utils/colors.dart';
 import 'package:etaxi_admin/utils/sizeConfig.dart';
 import 'package:etaxi_admin/widgets/my_trip_card.dart';
 import 'package:etaxi_admin/widgets/orderFilters.dart';
@@ -34,9 +35,24 @@ class _OrdersPageState extends State<OrdersPage> {
           ],
         ),
         sh(16),
-        Text(
-          "Pregled Narudzbi",
-          style: TextStyle(fontSize: 20),
+        Row(
+          children: [
+            Text(
+              "Pregled Narudzbi",
+              style: TextStyle(fontSize: 20),
+            ),
+            sb(20),
+            MaterialButton(
+              onPressed: () {
+                setState(() {});
+              },
+              child: Text("Osvjezi prikaz"),
+              textColor: Colors.white,
+              color: primaryColor,
+              height: 50,
+              minWidth: 180,
+            )
+          ],
         ),
         sh(16),
         Row(
@@ -48,7 +64,7 @@ class _OrdersPageState extends State<OrdersPage> {
                     orderFiltersOpened = !orderFiltersOpened;
                   });
                 },
-                icon: Icon(Icons.filter_alt))
+                icon: Icon(Icons.filter_alt)),
           ],
         ),
         if (orderFiltersOpened) OrderFilters(),

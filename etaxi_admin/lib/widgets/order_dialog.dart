@@ -1,5 +1,6 @@
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:etaxi_admin/models/vehicle_model.dart';
+import 'package:etaxi_admin/providers/auth_provider.dart';
 import 'package:etaxi_admin/providers/order_provider.dart';
 import 'package:etaxi_admin/services/main_service.dart';
 import 'package:etaxi_admin/services/order_service.dart';
@@ -81,7 +82,11 @@ class _OrderDialogState extends State<OrderDialog> {
                 height: 300,
                 constraints: BoxConstraints(minHeight: 200, maxHeight: 400),
                 child: FutureBuilder<List<VehicleModel>>(
-                  future: MainServices.getVehicles(),
+                  future: MainServices.getVehicles(queryParams: {
+                    "CompanyId":
+                        AuthProvider.instance.user!.companyId?.toString() ??
+                            null
+                  }),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return CircularProgressIndicator();

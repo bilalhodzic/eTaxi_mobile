@@ -1,6 +1,7 @@
 import 'package:etaxi_admin/models/order_model.dart';
 import 'package:etaxi_admin/utils/colors.dart';
 import 'package:etaxi_admin/utils/sizeConfig.dart';
+import 'package:etaxi_admin/widgets/orderStatus_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -15,7 +16,7 @@ class MyTripCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 400,
+      height: 450,
       width: 350,
       margin: EdgeInsets.only(right: 15, bottom: 10, left: 15),
       decoration: BoxDecoration(
@@ -30,13 +31,6 @@ class MyTripCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              // Padding(
-              //   padding: EdgeInsets.only(top: 13, left: 20),
-              //   child: Container(
-              //     height: 60,
-              //     width: 60,
-              //   ),
-              // ),
               sb(10),
               Padding(
                 padding: EdgeInsets.only(top: 13),
@@ -172,6 +166,32 @@ class MyTripCard extends StatelessWidget {
                     ),
                   ],
                 ),
+                sh(10),
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: Row(
+                        children: [
+                          Text(
+                            "Vozilo: ",
+                            style: TextStyle(
+                              fontSize: 10,
+                              letterSpacing: 0.6,
+                            ),
+                          ),
+                          Text(
+                            order.vehicle?.vehicleName ?? '',
+                            style: TextStyle(
+                              fontSize: 10,
+                              letterSpacing: 0.6,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                )
               ],
             ),
           ),
@@ -246,54 +266,49 @@ class MyTripCard extends StatelessWidget {
           sh(12),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Container(
-                //   padding: EdgeInsets.symmetric(
-                //     horizontal: 9,
-                //     vertical: 5,
-                //   ),
-                //   decoration: BoxDecoration(
-                //     color: primaryColor,
-                //     borderRadius: BorderRadius.circular(11),
-                //   ),
-                //   child: Text(
-                //     "Ma ja " + " Fare",
-                //     style: TextStyle(
-                //       fontSize: 12,
-                //       color: Colors.black.withOpacity(0.8),
-                //     ),
-                //   ),
-                // ),
-                Spacer(),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      "UKUPNO",
-                      style: TextStyle(
-                        fontSize: 10,
-                        letterSpacing: 0.6,
-                        color: Colors.black.withOpacity(0.7),
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    sh(2),
-                    Text(
-                      "${order.price} BAM",
-                      style: TextStyle(
-                        fontSize: 18,
-                        letterSpacing: 0.6,
-                        color: secondaryColor,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ],
+                Text(
+                  "UKUPNO",
+                  style: TextStyle(
+                    fontSize: 10,
+                    letterSpacing: 0.6,
+                    color: Colors.black.withOpacity(0.7),
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                sh(2),
+                Text(
+                  "${order.price} BAM",
+                  style: TextStyle(
+                    fontSize: 18,
+                    letterSpacing: 0.6,
+                    color: secondaryColor,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ],
             ),
           ),
-          sh(14),
+          sh(10),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+              children: [
+                IconButton(
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: ((context) => OrderStatusDialog(
+                                order: order,
+                              )));
+                    },
+                    icon: Icon(Icons.edit_note_sharp)),
+                Text("Promijeni status narudzbe")
+              ],
+            ),
+          )
         ],
       ),
     );

@@ -39,6 +39,8 @@ class OrderProvider extends ChangeNotifier {
   Map<String, dynamic> vehicleFilters = {};
   Map<String, dynamic> orderFilters = {};
 
+  bool resetState = false;
+
   void setVehicleFilters(Map<String, dynamic> filters) {
     vehicleFilters = filters;
     notifyListeners();
@@ -123,6 +125,11 @@ class OrderProvider extends ChangeNotifier {
   Future setDestinationLoc(Location loc) async {
     destinationLocationData = loc;
 
+    notifyListeners();
+  }
+
+  void resetStateFunction(bool value) {
+    resetState = value;
     notifyListeners();
   }
 

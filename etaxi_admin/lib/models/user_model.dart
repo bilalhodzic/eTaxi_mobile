@@ -21,6 +21,7 @@ class Userinfo {
   String? photoUrl;
   List<FileModel>? files;
   List<Favorite>? favorites;
+  int? companyId;
 
   Userinfo({
     this.id,
@@ -39,6 +40,7 @@ class Userinfo {
     this.verifiedAccount,
     this.files,
     this.favorites,
+    this.companyId,
   });
 
   Userinfo.fromJson(Map<String, dynamic> json) {
@@ -55,6 +57,7 @@ class Userinfo {
             .map((favorite) => Favorite.fromJson(favorite))
             .toList()
         : null;
+    companyId = json['companyId'] ?? null;
     //userType = json['UserType'];
     //isActive = json['IsActive'];
     //userCreatedTime = DateTime.parse(json['UserCreatedTime']);

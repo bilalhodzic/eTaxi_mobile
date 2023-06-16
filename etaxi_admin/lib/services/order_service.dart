@@ -29,6 +29,17 @@ class OrderService {
     return [];
   }
 
+  static Future setOrderStatus(data) async {
+    try {
+      Response res = await ApiModels()
+          .putRequest(url: 'api/Order/setOrderStatus', data: data);
+      inspect(res);
+    } catch (e) {
+      print('ERROR ON SET ORDER STATUS $e');
+      throw e;
+    }
+  }
+
   static Future createOrder({bool isSelfDrive = false}) async {
     var vehicle = OrderProvider.instance.selectedVehicle!;
 
