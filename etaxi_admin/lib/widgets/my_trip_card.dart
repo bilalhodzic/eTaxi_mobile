@@ -1,6 +1,11 @@
+import 'dart:developer';
+
 import 'package:etaxi_admin/models/order_model.dart';
+import 'package:etaxi_admin/providers/order_provider.dart';
+import 'package:etaxi_admin/services/order_service.dart';
 import 'package:etaxi_admin/utils/colors.dart';
 import 'package:etaxi_admin/utils/sizeConfig.dart';
+import 'package:etaxi_admin/widgets/app_snack_bar.dart';
 import 'package:etaxi_admin/widgets/orderStatus_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -209,16 +214,13 @@ class MyTripCard extends StatelessWidget {
                     ),
                     sb(19),
                     Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            order.startLocation?.address ?? '',
-                            style: TextStyle(
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
+                      child: Text(
+                        order.startLocation?.address ?? '',
+                        maxLines: 2,
+                        style: TextStyle(
+                          fontSize: 12,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ),
                   ],
@@ -239,16 +241,13 @@ class MyTripCard extends StatelessWidget {
                     ),
                     sb(19),
                     Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            order.endLocation?.address ?? '',
-                            style: TextStyle(
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
+                      child: Text(
+                        order.endLocation?.address ?? '',
+                        maxLines: 2,
+                        style: TextStyle(
+                          fontSize: 12,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ),
                   ],
@@ -305,7 +304,44 @@ class MyTripCard extends StatelessWidget {
                               )));
                     },
                     icon: Icon(Icons.edit_note_sharp)),
-                Text("Promijeni status narudzbe")
+                Text("Promijeni status narudzbe"),
+                Spacer(),
+                IconButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text('Brisanje narudzbe'),
+                          content: Text(
+                              'Da li ste sigurni da želite da obrišete ovu narudzbu?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text('Ne'),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                try {
+                                  await OrderService.deleteOrder(order.id!);
+                                  OrderProvider.instance.resetStateFunction();
+                                  appSnackBar(
+                                      context: context,
+                                      msg: "Narudzba uspjesno izbrisana",
+                                      isError: false);
+                                } catch (e) {
+                                  log("ERORR DELETING VEHICLE TYPE: $e");
+                                }
+                                Navigator.pop(context);
+                              },
+                              child: Text('Da'),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                    icon: Icon(Icons.delete)),
               ],
             ),
           )

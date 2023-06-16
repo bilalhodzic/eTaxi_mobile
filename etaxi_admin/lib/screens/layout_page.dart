@@ -4,7 +4,9 @@ import 'package:etaxi_admin/providers/order_provider.dart';
 import 'package:etaxi_admin/screens/login.dart';
 import 'package:etaxi_admin/screens/main_page.dart';
 import 'package:etaxi_admin/screens/orders_page.dart';
+import 'package:etaxi_admin/screens/users_page.dart';
 import 'package:etaxi_admin/screens/vehicles_page.dart';
+import 'package:etaxi_admin/utils/colors.dart';
 import 'package:etaxi_admin/utils/sizeConfig.dart';
 import 'package:flutter/material.dart';
 
@@ -18,20 +20,25 @@ class LayoutPageAdmin extends StatefulWidget {
 class _LayoutPageAdminState extends State<LayoutPageAdmin> {
   int _currentIndex = 0;
 
-  final sidebarItems = ['Pregled', 'Narudzbe', 'Vozila'];
+  final sidebarItems = ['Pregled', 'Narudzbe', 'Vozila', "Korisnici"];
 
-  final sidebarScreens = [MainPageAdmin(), OrdersPage(), VehiclesPage()];
+  final sidebarScreens = [
+    MainPageAdmin(),
+    OrdersPage(),
+    VehiclesPage(),
+    UsersPage()
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Main page'),
-      ),
+      // appBar: AppBar(
+      //   title: Text('Main page'),
+      // ),
       body: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Drawer(
-            width: SizeConfig.screenWidth / 4,
+            width: SizeConfig.screenWidth / 6,
             child: ListView(
               children: [
                 ...sidebarItems.map((
@@ -46,7 +53,10 @@ class _LayoutPageAdminState extends State<LayoutPageAdmin> {
                       },
                     )),
                 ListTile(
-                  title: Text('Odjavi se'),
+                  title: Text(
+                    'Odjavi se',
+                    style: TextStyle(color: warningColor),
+                  ),
                   onTap: () {
                     AuthProvider.instance.reset();
                     OrderProvider.instance.resetToInit();

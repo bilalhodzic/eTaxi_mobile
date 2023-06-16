@@ -23,7 +23,7 @@ class CustomButton extends StatelessWidget {
     return InkWell(
       onTap: onPressed,
       child: Container(
-        width: width ?? SizeConfig.screenWidth,
+        width: width ?? SizeConfig.screenWidth / 3,
         height: height ?? h * 45,
         alignment: Alignment.center,
         padding: EdgeInsets.symmetric(
@@ -59,7 +59,7 @@ class LoadingButton extends StatelessWidget {
     var b = SizeConfig.screenWidth / 720;
 
     return Container(
-      width: SizeConfig.screenWidth,
+      width: SizeConfig.screenWidth / 3,
       alignment: Alignment.center,
       padding: EdgeInsets.symmetric(vertical: h * 12),
       decoration: BoxDecoration(

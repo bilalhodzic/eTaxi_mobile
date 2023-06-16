@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:etaxi_admin/models/vehicle_model.dart';
+import 'package:etaxi_admin/providers/auth_provider.dart';
 import 'package:etaxi_admin/services/main_service.dart';
 import 'package:etaxi_admin/utils/colors.dart';
 import 'package:etaxi_admin/utils/sizeConfig.dart';
@@ -129,7 +132,6 @@ class _VehicleBoxState extends State<VehicleBox> {
                           ),
                           IconButton(
                             icon: Icon(Icons.delete),
-                            color: Colors.red,
                             onPressed: () {
                               showDialog(
                                   context: context,
@@ -146,10 +148,17 @@ class _VehicleBoxState extends State<VehicleBox> {
                                           child: Text('Cancel'),
                                         ),
                                         TextButton(
-                                          onPressed: () {
+                                          onPressed: () async {
+                                            try {
+                                              await services.deleteVehicle(
+                                                  id: widget
+                                                      .vehicle.vehicleId!);
+                                              AuthProvider.instance
+                                                  .resetStateFunction();
+                                            } catch (e) {
+                                              log("ERROR DELETING VEHICLE $e");
+                                            }
                                             Navigator.pop(context);
-                                            services.deleteVehicle(
-                                                id: widget.vehicle.vehicleId!);
                                           },
                                           child: Text('Delete'),
                                         ),

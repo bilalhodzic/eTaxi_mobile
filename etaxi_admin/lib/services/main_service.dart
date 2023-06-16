@@ -91,26 +91,44 @@ class MainServices {
     http.Response res =
         await ApiModels().postRequest(url: 'api/VehicleType', data: data);
     if (res.statusCode == 200) {
-      // var token = jsonDecode(res.body)['Token'];
-      //AuthProvider.instance.setToken(token);
     } else {
-      //AuthProvider.instance.setError(jsonDecode(res.body)["title"], 'register');
       print(res.body);
     }
 
     return res;
   }
 
-  Future deleteVehicle({required int id}) async {
-    http.Response res = await ApiModels().deleteRequest(url: 'api/Vehicle/$id');
-    if (res.statusCode == 200) {
-      //var token = jsonDecode(res.body)['Token'];
-      //AuthProvider.instance.setToken(token);
-    } else {
-      //AuthProvider.instance.setError(jsonDecode(res.body)["title"], 'register');
-      print(res.body);
+  static Future editVehicleType({data, required int id}) async {
+    try {
+      http.Response res =
+          await ApiModels().putRequest(url: 'api/VehicleType/$id', data: data);
+      inspect(res);
+      return res;
+    } catch (e) {
+      throw e;
     }
-    return res;
+  }
+
+  static Future deleteVehicleType({required int id}) async {
+    try {
+      http.Response res =
+          await ApiModels().deleteRequest(url: 'api/VehicleType/$id');
+      inspect(res);
+      return res;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future deleteVehicle({required int id}) async {
+    try {
+      http.Response res =
+          await ApiModels().deleteRequest(url: 'api/Vehicle/$id');
+      inspect(res);
+      return res;
+    } catch (e) {
+      throw e;
+    }
   }
 
   static Future<Map<String, dynamic>> getReport(

@@ -57,11 +57,11 @@ class CustomTextField extends StatelessWidget {
             label!,
             style: TextStyle(
               fontWeight: isBold! ? FontWeight.w500 : FontWeight.w400,
-              fontSize: labelSize ?? b * 11,
+              fontSize: labelSize ?? b * 9,
               color: Color(0xff3c3b3b),
             ),
           ),
-        if (label != null) sh(10),
+        if (label != null) sh(5),
         TextFormField(
           key: key,
           readOnly: readOnly ?? false,
@@ -70,7 +70,7 @@ class CustomTextField extends StatelessWidget {
                 return null;
               },
           style: TextStyle(
-            fontSize: size ?? b * 14,
+            fontSize: size ?? b * 9,
             fontWeight: FontWeight.w500,
             letterSpacing: spacing ?? 0,
           ),
@@ -195,7 +195,7 @@ class _AppTextFieldPasswordState extends State<CustomTextFieldPassword> {
                         return null;
                       },
                   style: TextStyle(
-                    fontSize: widget.size ?? b * 14,
+                    fontSize: widget.size ?? b * 12,
                     fontWeight: FontWeight.w500,
                     letterSpacing: widget.spacing ?? 0,
                   ),

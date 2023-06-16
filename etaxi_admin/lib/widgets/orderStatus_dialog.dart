@@ -102,7 +102,7 @@ class _OrderStatusDialogState extends State<OrderStatusDialog> {
 
               try {
                 await OrderService.setOrderStatus(data);
-                OrderProvider.instance.resetStateFunction(true);
+                OrderProvider.instance.resetStateFunction();
                 appSnackBar(
                     context: context,
                     msg: "Status uspjeno izmjenjen",

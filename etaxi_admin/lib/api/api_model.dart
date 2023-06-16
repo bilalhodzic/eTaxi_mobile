@@ -60,7 +60,6 @@ class ApiModels {
   Future getRequest(
       {required String url, Map<String, dynamic>? queryParams}) async {
     final uri = Uri.http(apiUrl, url, queryParams);
-    print(uri);
     final response = await http.get(
       uri,
       headers: <String, String>{

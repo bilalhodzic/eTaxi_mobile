@@ -5,6 +5,7 @@ import 'package:etaxi_admin/api/api_model.dart';
 import 'package:etaxi_admin/models/user_model.dart';
 import 'package:etaxi_admin/models/vehicle_model.dart';
 import 'package:etaxi_admin/providers/auth_provider.dart';
+import 'package:etaxi_admin/providers/main_provider.dart';
 import 'package:http/http.dart';
 import 'package:jwt_decode/jwt_decode.dart';
 
@@ -72,6 +73,23 @@ class UserServices {
     }
   }
 
+  static Future<List<Userinfo>> getAllUser() async {
+    List<Userinfo> users = [];
+    try {
+      Response res = await ApiModels().getRequest(url: 'api/User/');
+      if (res.statusCode == 200) {
+        var data = json.decode(res.body);
+        data.forEach((element) {
+          users.add(Userinfo.fromJson(element));
+        });
+        MainProvider.instance.setAllUsers(users);
+      }
+    } catch (e) {
+      throw e;
+    }
+    return users;
+  }
+
   static Future uploadUserFiles(List<String> filePaths) async {
     try {
       for (var i = 0; i < filePaths.length; i++) {
@@ -83,42 +101,26 @@ class UserServices {
     }
   }
 
-  static Future addFavoriteCompany(VehicleModel vehicle) async {
-    if (vehicle.companyId == null || vehicle.companyId == 0)
-      throw "Nije moguce dodati vozilo bez kompanije";
-
-    var dataToSend = {
-      "userId": AuthProvider.instance.user!.id,
-      "companyId": vehicle.companyId,
-    };
+  static Future addUser(data) async {
     try {
-      Response res =
-          await ApiModels().postRequest(url: 'api/Favorite', data: dataToSend);
-      inspect(res);
-      if (res.statusCode == 200) {
-        return jsonDecode(res.body);
-      } else {
-        throw jsonDecode(res.body)['title'];
-      }
+      Response res = await ApiModels().postRequest(url: 'api/User', data: data);
+      return jsonDecode(res.body);
     } catch (e) {
       throw e;
     }
   }
 
-  static Future deleteFavoriteCompany(int favoriteId) async {
-    if (favoriteId == 0) throw "Nije moguce izbrisati favorita";
-
-    var dataToSend = {
-      "Id": favoriteId,
-    };
+  static Future editUser(data) async {
     try {
-      Response res = await ApiModels()
-          .deleteRequest(url: 'api/Favorite/$favoriteId', data: dataToSend);
-      if (res.statusCode == 200) {
-        return jsonDecode(res.body);
-      } else {
-        throw jsonDecode(res.body)['title'];
-      }
+      await ApiModels().putRequest(url: 'api/User', data: data);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  static Future deleteUser(int id) async {
+    try {
+      await ApiModels().deleteRequest(url: 'api/User/$id');
     } catch (e) {
       throw e;
     }

@@ -124,6 +124,7 @@ class _OrderDialogState extends State<OrderDialog> {
                 ),
               ),
             ),
+            sh(10),
             Text(
               "Vrijeme narudzbe",
             ),

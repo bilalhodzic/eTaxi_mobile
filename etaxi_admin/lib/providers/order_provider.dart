@@ -128,8 +128,8 @@ class OrderProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void resetStateFunction(bool value) {
-    resetState = value;
+  void resetStateFunction() {
+    resetState = !resetState;
     notifyListeners();
   }
 

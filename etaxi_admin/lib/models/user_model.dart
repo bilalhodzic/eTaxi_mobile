@@ -58,6 +58,7 @@ class Userinfo {
             .toList()
         : null;
     companyId = json['companyId'] ?? null;
+    phoneNumber = json['phoneNumber'] ?? null;
     //userType = json['UserType'];
     //isActive = json['IsActive'];
     //userCreatedTime = DateTime.parse(json['UserCreatedTime']);

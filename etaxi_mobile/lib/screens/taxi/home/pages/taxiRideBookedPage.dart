@@ -148,6 +148,7 @@ class TaxiRideBooked extends StatelessWidget {
                                               ignoreGestures: true,
                                               direction: Axis.horizontal,
                                               itemCount: 5,
+                                              allowHalfRating: true,
                                               itemSize: 20,
                                               itemBuilder: (context, _) => Icon(
                                                 Icons.star,

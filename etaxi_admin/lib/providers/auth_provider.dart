@@ -15,6 +15,8 @@ class AuthProvider extends ChangeNotifier {
   AuthProvider._();
   AuthProvider._internal();
 
+  bool resetState = false;
+
   String? token;
   String? loginError;
   String? registerError;
@@ -37,6 +39,11 @@ class AuthProvider extends ChangeNotifier {
 
   setToken(userToken) {
     token = userToken;
+    notifyListeners();
+  }
+
+  void resetStateFunction() {
+    resetState = !resetState;
     notifyListeners();
   }
 
