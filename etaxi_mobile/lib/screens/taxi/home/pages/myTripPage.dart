@@ -2,6 +2,8 @@ import 'dart:developer';
 
 import 'package:etaxi_mobile/providers/auth_provider.dart';
 import 'package:etaxi_mobile/providers/order_provider.dart';
+import 'package:etaxi_mobile/screens/taxi/home/pages/homeTaxi.dart';
+import 'package:etaxi_mobile/screens/taxi/home/pages/taxiRideBookedPage.dart';
 import 'package:etaxi_mobile/screens/taxi/home/widgets/myTripCard.dart';
 import 'package:etaxi_mobile/services/order_services.dart';
 import 'package:etaxi_mobile/utils/sizeConfig.dart';
@@ -10,7 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class MyTripPage extends StatefulWidget {
-  const MyTripPage({Key? key}) : super(key: key);
+  MyTripPage({Key? key}) : super(key: key);
 
   @override
   State<MyTripPage> createState() => _MyTripPageState();
@@ -18,33 +20,50 @@ class MyTripPage extends StatefulWidget {
 
 class _MyTripPageState extends State<MyTripPage> {
   List<String> types = [
-    'AllBookingsLabel',
-    'PendingLabel',
-    'ConfirmedLabel',
-    'OnGoingLabel',
-    'CompletedLabel',
-    'CancelledLabel',
+    'Sve',
+    'Zavrsene',
+    'Aktivne',
+    'Otkazane',
   ];
 
-  String historyType = 'AllBookingsLabel';
+  var defaultFilter = {'UserId': AuthProvider.instance.user?.id.toString()};
 
-  List numbers = [1, 3, 2, 8, 5, 0, 4, 6, 7];
+  late Map<String, dynamic> orderFilter = defaultFilter;
 
   String label(String title) {
-    if (title == 'PendingLabel')
+    if (title == 'Neaktivne')
       return "assets/icons/pending.svg";
-    else if (title == 'ConfirmedLabel')
+    else if (title == 'Aktivne')
       return "assets/icons/confirmed.svg";
-    else if (title == 'CompletedLabel')
+    else if (title == 'Zavrsene')
       return "assets/icons/completed.svg";
-    else if (title == 'CancelledLabel')
+    else if (title == 'Otkazane')
       return "assets/icons/cancelled.svg";
-    else if (title == 'ConfirmedLabel')
-      return "assets/icons/confirmed.svg";
-    else if (title == 'AllBookingsLabel')
-      return "assets/icons/all bookings.svg";
-
+    else if (title == 'Sve') return "assets/icons/all bookings.svg";
     return '';
+  }
+
+  void setOrderFilter(String filter) {
+    if (filter == 'Zavrsene')
+      setState(() {
+        orderFilter = {
+          ...defaultFilter,
+          "IsActive": "false",
+          "IsCanceled": "false"
+        };
+      });
+    else if (filter == 'Aktivne')
+      setState(() {
+        orderFilter = {...defaultFilter, "IsActive": "true"};
+      });
+    else if (filter == 'Otkazane')
+      setState(() {
+        orderFilter = {...defaultFilter, "IsCanceled": "true"};
+      });
+    else if (filter == 'Sve')
+      setState(() {
+        orderFilter = defaultFilter;
+      });
   }
 
   @override
@@ -65,9 +84,7 @@ class _MyTripPageState extends State<MyTripPage> {
                   borderRadius: BorderRadius.circular(4),
                 ),
                 onSelected: (value) {
-                  setState(() {
-                    historyType = value;
-                  });
+                  setOrderFilter(value);
                 },
                 itemBuilder: (BuildContext context) {
                   return types.map((String choice) {
@@ -76,9 +93,7 @@ class _MyTripPageState extends State<MyTripPage> {
                       child: Row(
                         children: [
                           SvgPicture.asset(
-                            choice != 'OnGoingLabel'
-                                ? label(choice)
-                                : "assets/icons/choose_your_car.svg",
+                            label(choice),
                             width: 16,
                             color: Colors.black,
                           ),
@@ -119,12 +134,14 @@ class _MyTripPageState extends State<MyTripPage> {
                   sh(20),
                   Expanded(
                       child: FutureBuilder(
-                          future: OrderServices.getOrders(queryParams: {
-                            'UserId': AuthProvider.instance.user?.id.toString()
-                          }),
+                          future:
+                              OrderServices.getOrders(queryParams: orderFilter),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
-                                ConnectionState.done)
+                                ConnectionState.done) {
+                              if (OrderProvider.instance.orders.length == 0)
+                                return Center(
+                                    child: Text("Nema pronadjenih narudžbi"));
                               return ListView.builder(
                                 padding: EdgeInsets.only(top: 10),
                                 shrinkWrap: true,
@@ -134,11 +151,20 @@ class _MyTripPageState extends State<MyTripPage> {
                                   var order =
                                       OrderProvider.instance.orders[index];
                                   return InkWell(
-                                      onTap: () {},
+                                      onTap: () {
+                                        OrderProvider.instance
+                                            .setSelectedOrder(order);
+
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (_) => HomeTaxi(),
+                                          ),
+                                        );
+                                      },
                                       child: MyTripCard(order: order));
                                 },
                               );
-                            else
+                            } else
                               return Center(child: CircularProgressIndicator());
                           })),
                 ],

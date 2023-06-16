@@ -2,15 +2,16 @@ import 'dart:developer';
 
 import 'package:etaxi_mobile/api/api_model.dart';
 import 'package:etaxi_mobile/models/directions_model.dart';
-import 'package:etaxi_mobile/models/location_model.dart';
+import 'package:etaxi_mobile/models/location_model.dart' as LocModel;
 import 'package:etaxi_mobile/providers/order_provider.dart';
 import 'package:etaxi_mobile/screens/taxi/home/pages/bookingPage.dart';
 import 'package:etaxi_mobile/screens/taxi/home/pages/destinationPage.dart';
 import 'package:etaxi_mobile/screens/taxi/home/pages/taxiRideBookedPage.dart';
 import 'package:etaxi_mobile/screens/taxi/widgets/googleMapWidget.dart';
 import 'package:etaxi_mobile/services/directions_services.dart';
-import 'package:etaxi_mobile/widgets/searchBar.dart';
+import 'package:etaxi_mobile/widgets/searchBar.dart' as sb;
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:place_picker/entities/location_result.dart';
@@ -42,17 +43,28 @@ class _HomeTaxiState extends State<HomeTaxi> {
 
     final loc = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.bestForNavigation);
-    OrderProvider.instance.setCurrentLoc(Location(
-        latitude: loc.latitude,
-        longitude: loc.longitude,
-        address: "Trenutna lokacija"));
+
+    List<Placemark> placemarks =
+        await placemarkFromCoordinates(loc.latitude, loc.longitude);
+    Placemark place = placemarks[0];
+    OrderProvider.instance.setCurrentLoc(LocModel.Location(
+      latitude: loc.latitude,
+      longitude: loc.longitude,
+      address:
+          '${place.street}, ${place.subLocality}, ${place.subAdministrativeArea}, ${place.postalCode}',
+      postalCode: place.postalCode,
+      city: place.locality,
+      country: place.country,
+    ));
     _cameraPosition =
         CameraPosition(target: LatLng(loc.latitude, loc.longitude));
   }
 
   @override
   void initState() {
-    setCurrentLocMarker();
+    if (OrderProvider.instance.selectedOrder == null) {
+      setCurrentLocMarker();
+    }
     super.initState();
   }
 
@@ -100,7 +112,7 @@ class _HomeTaxiState extends State<HomeTaxi> {
                         color: Colors.white,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: SearchBar(
+                          child: sb.SearchBar(
                             hintText: value.currentLocationData != null
                                 ? value.currentLocationData!.address!
                                 : "Izaberite pocetnu lokaciju",
@@ -121,7 +133,7 @@ class _HomeTaxiState extends State<HomeTaxi> {
                               );
                               if (result.latLng != null) {
                                 await OrderProvider.instance.setCurrentLoc(
-                                  Location(
+                                  LocModel.Location(
                                     latitude: result.latLng!.latitude,
                                     longitude: result.latLng!.longitude,
                                     address: result.formattedAddress,

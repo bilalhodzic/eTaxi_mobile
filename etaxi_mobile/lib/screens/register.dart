@@ -1,7 +1,7 @@
 import 'package:etaxi_mobile/providers/auth_provider.dart';
 import 'package:etaxi_mobile/screens/login.dart';
 import 'package:etaxi_mobile/screens/mode_selector.dart';
-import 'package:etaxi_mobile/services/auth_services.dart';
+import 'package:etaxi_mobile/services/user_services.dart';
 import 'package:etaxi_mobile/utils/colors.dart';
 import 'package:etaxi_mobile/utils/sizeConfig.dart';
 import 'package:etaxi_mobile/widgets/app_snack_bar.dart';
@@ -39,12 +39,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   void initState() {
-    emailController.text = 'email@email.com';
-    pwdController.text = 'Sifra123_';
-    confPwdController.text = 'Sifra123_';
-    phoneController.text = '603572781';
-    firstNameController.text = 'Bilal';
-    lastNameController.text = "Hodzic";
+    // emailController.text = 'email@email.com';
+    // pwdController.text = 'Sifra123_';
+    // confPwdController.text = 'Sifra123_';
+    // phoneController.text = '603572781';
+    // firstNameController.text = 'Bilal';
+    // lastNameController.text = "Hodzic";
     super.initState();
   }
 
@@ -59,7 +59,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       "phoneNumber": phoneController.text,
     };
     try {
-      await AuthServices.registerService(dataToSend);
+      await UserServices.registerService(dataToSend);
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (_) => LoginScreen(),
@@ -67,6 +67,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       );
     } catch (e) {
       print(e);
+      AuthProvider.instance.setError(e.toString(), 'register');
     } finally {
       if (mounted) {
         setState(() {
@@ -282,7 +283,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               label: 'Registracija',
                               onPressed: () async {
                                 FocusScope.of(context).unfocus();
-                                if (!_formKey.currentState!.validate()) return;
+                                if (!_formKey.currentState!.validate())
+                                  return null;
                                 if (pwdController.text.trim().length < 8) {
                                   appSnackBar(
                                     context: context,
@@ -291,8 +293,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     isError: true,
                                   );
                                 } else {
-                                  isPressed = true;
-                                  setState(() {});
+                                  setState(() {
+                                    isPressed = true;
+                                  });
 
                                   register();
                                 }

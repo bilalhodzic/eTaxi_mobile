@@ -1,7 +1,15 @@
+import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:etaxi_mobile/models/user_model.dart';
+import 'package:etaxi_mobile/providers/auth_provider.dart';
+import 'package:etaxi_mobile/services/user_services.dart';
 import 'package:etaxi_mobile/utils/sizeConfig.dart';
+import 'package:etaxi_mobile/utils/utilFunctions.dart';
+import 'package:etaxi_mobile/widgets/app_snack_bar.dart';
+import 'package:etaxi_mobile/widgets/custom_button.dart';
+import 'package:etaxi_mobile/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -13,11 +21,42 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  List<XFile> _images = [];
+  List<String> _imagePaths = [];
   TextEditingController _nameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
-  TextEditingController _addressController = TextEditingController();
+  TextEditingController _surnameController = TextEditingController();
   TextEditingController _phoneController = TextEditingController();
+
+  bool isPressed = false;
+
+  @override
+  void initState() {
+    getUserProfile();
+
+    super.initState();
+  }
+
+  void getUserProfile() async {
+    var userDecoded =
+        await UserServices.getUser(AuthProvider.instance.user!.id!);
+    var user = Userinfo.fromJson(userDecoded);
+    //add user data to text controllers
+    _nameController.text = user.firstName!;
+    _surnameController.text = user.lastName!;
+    _emailController.text = user.email!;
+
+    //check any files from user
+    var userFiles = user.files;
+    if (userFiles != null && userFiles.isNotEmpty) {
+      var newImagePaths = <String>[];
+      userFiles.forEach((file) {
+        newImagePaths.add(formatFileUrl(file.url));
+      });
+      setState(() {
+        _imagePaths = newImagePaths;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,29 +95,19 @@ class _ProfilePageState extends State<ProfilePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 sh(20),
-                Text('Ime i prezime'),
-                sh(10),
-                TextField(
-                  controller: _nameController,
-                ),
+                CustomTextField(label: "Ime", controller: _nameController),
                 sh(20),
-                Text('Adresa'),
-                sh(10),
-                TextField(
-                  controller: _addressController,
-                ),
+                CustomTextField(
+                    label: "Prezime", controller: _surnameController),
                 sh(20),
-                Text('Email'),
-                sh(10),
-                TextField(
+                CustomTextField(
+                  label: "Email",
                   controller: _emailController,
+                  readOnly: true,
                 ),
                 sh(20),
-                Text('Broj telefona'),
-                sh(10),
-                TextField(
-                  controller: _phoneController,
-                ),
+                CustomTextField(
+                    label: "Broj telefona", controller: _phoneController),
                 sh(20),
                 Text('Dokumenti'),
                 sh(10),
@@ -89,13 +118,33 @@ class _ProfilePageState extends State<ProfilePage> {
                     GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () async {
-                        XFile? image = await ImagePicker()
-                            .pickImage(source: ImageSource.gallery);
-                        if (image != null)
-                          setState(() {
-                            _images.add(image);
-                            //proba
-                          });
+                        final imageSource = await showDialog<ImageSource>(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                                  title: Text("Odaberi izvor slike"),
+                                  actions: <Widget>[
+                                    CustomButton(
+                                      label: "Kamera",
+                                      onPressed: () => Navigator.pop(
+                                          context, ImageSource.camera),
+                                    ),
+                                    sh(10),
+                                    CustomButton(
+                                      label: "Galerija",
+                                      onPressed: () => Navigator.pop(
+                                          context, ImageSource.gallery),
+                                    )
+                                  ],
+                                ));
+                        if (imageSource != null) {
+                          XFile? file = await ImagePicker()
+                              .pickImage(source: imageSource);
+                          if (file != null) {
+                            setState(() => {
+                                  _imagePaths.add(file.path),
+                                });
+                          }
+                        }
                       },
                       child: Container(
                         height: 100,
@@ -108,39 +157,57 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ),
                     ),
-                    ..._images.map(
-                      (e) => FutureBuilder<Uint8List>(
-                          future: e.readAsBytes(),
-                          builder: (context, snapshot) {
-                            if (snapshot.data != null)
-                              return Container(
-                                height: 100,
-                                width: 100,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(6),
-                                    image: DecorationImage(
-                                        fit: BoxFit.cover,
-                                        image: Image.memory(snapshot.data!)
-                                            .image)),
-                              );
-
-                            return SizedBox();
-                          }),
-                    )
+                    ..._imagePaths.map((e) => Container(
+                          height: 100,
+                          width: 100,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(6),
+                              image: DecorationImage(
+                                  fit: BoxFit.cover,
+                                  image: e.contains("http")
+                                      ? Image.network(e).image
+                                      : Image.file(File(e)).image)),
+                        ))
                   ],
                 ),
                 sh(20),
-                MaterialButton(
-                  height: 40,
-                  minWidth: double.infinity,
-                  color: Colors.black,
-                  onPressed: () {},
-                  child: Text(
-                    'Sacuvaj'.toUpperCase(),
-                    style: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.w700),
-                  ),
-                ),
+                isPressed
+                    ? LoadingButton()
+                    : CustomButton(
+                        label: 'Sacuvaj',
+                        onPressed: () async {
+                          setState(() {
+                            isPressed = true;
+                          });
+                          var userDataToUpdate = {
+                            "id": AuthProvider.instance.user!.id,
+                            "firstName": _nameController.text,
+                            "lastName": _surnameController.text,
+                            "phone": _phoneController.text,
+                            // "email": _emailController.text,
+                          };
+
+                          try {
+                            if (_imagePaths.isNotEmpty) {
+                              await UserServices.uploadUserFiles(_imagePaths);
+                            }
+                            await UserServices.updateUser(userDataToUpdate);
+                            appSnackBar(
+                                context: context,
+                                msg: 'Uspjesno izmjenjeno',
+                                isError: false);
+                          } catch (e) {
+                            return appSnackBar(
+                                context: context,
+                                msg: e.toString(),
+                                isError: true);
+                          } finally {
+                            setState(() {
+                              isPressed = false;
+                            });
+                          }
+                        },
+                      ),
               ],
             ),
           ),

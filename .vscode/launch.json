@@ -1,0 +1,48 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "etaxi_admin",
+            "cwd": "etaxi_admin",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "etaxi_admin (profile mode)",
+            "cwd": "etaxi_admin",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "etaxi_admin (release mode)",
+            "cwd": "etaxi_admin",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "etaxi_mobile",
+            "cwd": "etaxi_mobile",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "etaxi_mobile (profile mode)",
+            "cwd": "etaxi_mobile",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "etaxi_mobile (release mode)",
+            "cwd": "etaxi_mobile",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        }
+    ]
+}

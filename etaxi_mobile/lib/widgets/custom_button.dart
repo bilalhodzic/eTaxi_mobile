@@ -6,12 +6,10 @@ class CustomButton extends StatelessWidget {
       {@required this.label,
       this.width,
       @override this.onPressed,
-      this.isShadow,
       this.vertPad,
       this.height});
   final String? label;
   final double? width;
-  final bool? isShadow;
   final double? vertPad;
   final double? height;
   final void Function()? onPressed;

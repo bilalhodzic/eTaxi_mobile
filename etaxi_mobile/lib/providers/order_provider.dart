@@ -5,7 +5,9 @@ import 'package:etaxi_mobile/models/location_model.dart';
 import 'package:etaxi_mobile/models/order_model.dart';
 import 'package:etaxi_mobile/models/vehicle_model.dart';
 import 'package:etaxi_mobile/screens/taxi/widgets/googleMapWidget.dart';
+import 'package:etaxi_mobile/services/directions_services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_credit_card/credit_card_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 enum BookingStage { PICKUP, DESTINATION, VEHICLES, RIDE_BOOKED }
@@ -25,24 +27,85 @@ class OrderProvider extends ChangeNotifier {
 
   OrderProvider._();
 
+  bool resetState = false;
+
   //Taxi order part START
   Location? currentLocationData;
   Location? destinationLocationData;
   Directions? directions;
 
+  DateTime? startTime;
   VehicleModel? selectedVehicle;
   double? orderPrice;
+  PaymentMethod paymentMethod = PaymentMethod.CASH;
+  CreditCardModel? creditCardModel;
 
   BookingStage stage = BookingStage.PICKUP;
 
-  PaymentMethod paymentMethod = PaymentMethod.CASH;
-
+  bool isEditOrder = false;
+  int? orderId;
   List<Order> orders = [];
+  Order? selectedOrder;
 
-//sets the value for taxi service type which can be selected on HomeMainTaxi page
+  Map<String, dynamic> vehicleFilters = {};
 
-  void setOrderPrice(double price) {
+  void setVehicleFilters(Map<String, dynamic> filters) {
+    vehicleFilters = filters;
+    notifyListeners();
+  }
+
+  void resetStateFunction() {
+    resetState = !resetState;
+    notifyListeners();
+  }
+
+  void setSelectedOrder(Order order) async {
+    //this method is used when viewing order list and clicking on one of the orders
+    //it sets all the data from that order to OrderProvider, so we can edit it if needed
+    selectedOrder = order;
+    orderId = order.id;
+    startTime = order.startTime;
+    selectedVehicle = order.vehicle;
+    orderPrice = order.price;
+    paymentMethod = order.paymentMethod == 'Gotovina'
+        ? PaymentMethod.CASH
+        : PaymentMethod.ONLINE;
+    destinationLocationData = order.endLocation;
+    currentLocationData = order.startLocation;
+    Directions? dir = await DirectionServices().getDirections(
+        origin: LatLng(
+            order.startLocation!.latitude!, order.startLocation!.longitude!),
+        dest: LatLng(
+            order.endLocation!.latitude!, order.endLocation!.longitude!));
+
+    if (dir != null) await setDirections(dir);
+    stage = BookingStage.RIDE_BOOKED;
+    notifyListeners();
+  }
+
+  void setCreditCardModel(CreditCardModel? model) {
+    creditCardModel = model;
+    notifyListeners();
+  }
+
+  void setOrderId(int? id) {
+    orderId = id;
+    notifyListeners();
+  }
+
+  void setIsEditOrder(bool value) {
+    isEditOrder = value;
+    if (value == true) setBookingStage(BookingStage.PICKUP);
+    notifyListeners();
+  }
+
+  void setOrderPrice(double price, {bool notify = true}) {
     orderPrice = price;
+    if (notify) notifyListeners();
+  }
+
+  void setStartTime(DateTime? time) {
+    startTime = time;
     notifyListeners();
   }
 
@@ -70,8 +133,9 @@ class OrderProvider extends ChangeNotifier {
           1;
       total = distanceNumber * selectedVehicle!.price!;
     }
-    setOrderPrice(total);
-    return total.toStringAsFixed(2) + " BAM";
+    double roundedTotal = double.parse(total.toStringAsFixed(2));
+    setOrderPrice(roundedTotal, notify: false);
+    return roundedTotal.toString() + " BAM";
   }
 
   void setBookingStage(BookingStage stage) {
@@ -104,21 +168,20 @@ class OrderProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future animateMapToDirectionBounds() async {
-    await mapController?.animateCamera(
-      CameraUpdate.newLatLngBounds(directions!.bounds!, 100),
-    );
-    notifyListeners();
-  }
-
   void resetToInit([bool shouldNotify = false]) {
     stage = BookingStage.PICKUP;
 
     destinationLocationData = null;
+    currentLocationData = null;
     directions = null;
     paymentMethod = PaymentMethod.CASH;
     selectedVehicle = null;
     orderPrice = null;
+    DateTime? startTime = null;
+    isEditOrder = false;
+    creditCardModel = null;
+    orderId = null;
+    selectedOrder = null;
 
     if (shouldNotify) notifyListeners();
   }

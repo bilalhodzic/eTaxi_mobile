@@ -24,7 +24,7 @@ class Location {
   });
 
   Location.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    id = json['id'] ?? 0;
     streetNumber = json['streetNumber'] ?? '';
     streetName = json['streetName'] ?? ' ';
     district = json['district'] ?? '';

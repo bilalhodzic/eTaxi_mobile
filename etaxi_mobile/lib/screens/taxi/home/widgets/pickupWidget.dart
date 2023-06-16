@@ -1,9 +1,11 @@
+import 'dart:developer';
+
 import 'package:etaxi_mobile/models/directions_model.dart';
 import 'package:etaxi_mobile/models/location_model.dart';
 import 'package:etaxi_mobile/providers/order_provider.dart';
 import 'package:etaxi_mobile/services/directions_services.dart';
 import 'package:etaxi_mobile/utils/sizeConfig.dart';
-import 'package:etaxi_mobile/widgets/searchBar.dart';
+import 'package:etaxi_mobile/widgets/searchBar.dart' as sb;
 import 'package:flutter/material.dart';
 import 'package:place_picker/entities/location_result.dart';
 import 'package:place_picker/place_picker.dart';
@@ -28,7 +30,7 @@ class PickupWidget extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Consumer<OrderProvider>(
-                builder: (context, value, child) => SearchBar(
+                builder: (context, value, child) => sb.SearchBar(
                   hintText: value.destinationLocationData?.address != null
                       ? value.destinationLocationData!.address!
                       : "Izaberite krajnju lokaciju",
@@ -37,7 +39,10 @@ class PickupWidget extends StatelessWidget {
                     LocationResult result = await Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => PlacePicker(googleApiKey),
+                          builder: (context) => PlacePicker(
+                            googleApiKey,
+                            defaultLocation: LatLng(43.8562, 18.4130),
+                          ),
                         ));
 
                     if (result.latLng != null) {
